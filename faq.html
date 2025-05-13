@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体聚合平台 - 常见问题</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 页头样式 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4285f4;
+        }
+        
+        .back-link {
+            color: #4285f4;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 内容样式 */
+        h1 {
+            color: #4285f4;
+            margin-bottom: 30px;
+        }
+        
+        .faq-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #1a73e8;
+            margin-bottom: 15px;
+        }
+        
+        .faq-answer {
+            color: #555;
+        }
+        
+        .code {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">智能体聚合平台</div>
+        <a href="index.html" class="back-link">返回主页</a>
+    </header>
+    
+    <h1>常见问题解答</h1>
+    
+    <div class="faq-item">
+        <div class="faq-question">1. 如何添加新的智能体？</div>
+        <div class="faq-answer">
+            <p>要添加新的智能体，请按照以下步骤操作：</p>
+            <ol>
+                <li>在页面右上角勾选"管理员模式"</li>
+                <li>在页面底部管理面板中点击"添加新智能体"按钮</li>
+                <li>填写智能体信息，包括名称、API地址、密钥等</li>
+                <li>点击"保存"按钮完成添加</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">2. 为什么我的API调用失败？</div>
+        <div class="faq-answer">
+            <p>API调用失败可能有以下几个原因：</p>
+            <ul>
+                <li>API密钥不正确或已过期</li>
+                <li>API地址填写错误</li>
+                <li>所选模型不可用或不支持</li>
+                <li>网络连接问题</li>
+            </ul>
+            <p>请检查您填写的API信息是否正确，并确保网络连接正常。如果问题仍然存在，可能是所使用的API服务暂时不可用。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">3. 什么是系统提示词？</div>
+        <div class="faq-answer">
+            <p>系统提示词是发送给AI模型的指导性信息，用于设置智能体的角色、行为和回答方式。良好的系统提示词可以使AI更好地理解其角色和任务。</p>
+            <p>例如，如果您想创建一个专注于编程帮助的智能体，可以使用以下系统提示词：</p>
+            <div class="code">
+                你是一名经验丰富的编程助手，擅长解释代码、提供编程建议和解决技术问题。当用户提出问题时，请提供清晰、具体和实用的解决方案。如果可能，请提供代码示例。
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">4. 温度参数有什么影响？</div>
+        <div class="faq-answer">
+            <p>温度是控制AI回复随机性的参数，取值范围通常为0-2：</p>
+            <ul>
+                <li><strong>低温度（接近0）</strong>：回复更确定、一致和可预测，适合需要准确信息的场景</li>
+                <li><strong>中温度（约0.7）</strong>：平衡了确定性和创造性，适合一般对话</li>
+                <li><strong>高温度（1以上）</strong>：回复更多样化、创造性和不可预测，适合创意写作和头脑风暴</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">5. 对话历史会保存吗？</div>
+        <div class="faq-answer">
+            <p>对话历史仅在当前会话中保存在内存中，页面刷新或关闭后将丢失。目前平台不提供对话历史的永久存储功能。</p>
+            <p>如需保存重要对话，建议手动复制并保存到其他文档中。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">6. 如何使用流式响应？</div>
+        <div class="faq-answer">
+            <p>流式响应（打字机效果）是平台的默认功能，无需特别设置。当您发送消息后，AI的回复会逐字显示，就像实时打字一样。</p>
+            <p>如果您发现没有流式响应效果，可能是由于以下原因：</p>
+            <ul>
+                <li>所选API或模型不支持流式响应</li>
+                <li>网络连接不稳定</li>
+                <li>浏览器不完全支持相关功能</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">7. 智能体配置会在不同设备间同步吗？</div>
+        <div class="faq-answer">
+            <p>不会。智能体配置存储在浏览器的localStorage中，这是本地存储，不会在不同设备或浏览器之间同步。</p>
+            <p>如果您需要在多个设备上使用相同的配置，需要在每个设备上单独设置。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">8. 如何获取API密钥？</div>
+        <div class="faq-answer">
+            <p>要获取API密钥，您需要注册相应的AI服务提供商并申请密钥。以下是一些常见的AI服务提供商：</p>
+            <ul>
+                <li>OpenAI (ChatGPT): <a href="https://platform.openai.com/" target="_blank">https://platform.openai.com/</a></li>
+                <li>Google AI (Gemini): <a href="https://ai.google.dev/" target="_blank">https://ai.google.dev/</a></li>
+                <li>Claude: <a href="https://claude.ai/login" target="_blank">https://claude.ai/login</a></li>
+                <li>智谱AI: <a href="https://open.bigmodel.cn/" target="_blank">https://open.bigmodel.cn/</a></li>
+                <li>文心一言: <a href="https://yiyan.baidu.com/" target="_blank">https://yiyan.baidu.com/</a></li>
+            </ul>
+            <p>注册后，按照平台指引创建API密钥，然后将密钥填入智能体配置中即可。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">9. Markdown渲染是什么？</div>
+        <div class="faq-answer">
+            <p>Markdown是一种轻量级标记语言，让文本内容更易于阅读和格式化。在我们的平台中，AI回复默认使用Markdown格式渲染，这意味着：</p>
+            <ul>
+                <li>代码块会有语法高亮</li>
+                <li>列表会正确缩进和格式化</li>
+                <li>标题会有不同大小和粗细</li>
+                <li>链接可以直接点击</li>
+                <li>表格会显示为格式化的表格</li>
+            </ul>
+            <p>如果您不喜欢这种渲染方式，可以在设置面板中关闭Markdown渲染功能。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">10. 如何复制AI回复的内容？</div>
+        <div class="faq-answer">
+            <p>每个AI回复消息的右上角都有一个"复制"按钮。点击此按钮可以将AI回复的全部内容复制到剪贴板，方便您粘贴到其他地方。</p>
+            <p>复制时会保留原始的Markdown格式，这意味着当您粘贴到支持Markdown的编辑器中时，格式仍会保持。</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 智能体聚合平台 | <a href="index.html">返回主页</a></p>
+    </footer>
+</body>
+</html> 

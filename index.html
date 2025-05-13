@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体聚合平台</title>
+    <!-- 添加 markdown 解析库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <!-- 添加代码高亮库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.3.1/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.3.1/highlight.min.js"></script>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        /* 导航栏样式 */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgb(76, 18, 161);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            margin-right: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .mode-switcher {
+            display: flex;
+            align-items: center;
+        }
+
+        .mode-switcher label {
+            margin-right: 10px;
+        }
+
+        /* 智能体选择器 */
+        .agent-selector {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 1rem;
+        }
+
+        /* 聊天容器 */
+        #chat-container {
+            height: 500px;
+            border: 1px solid #eaeaea;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* 输入区域 */
+        #input-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+
+        #send-button {
+            padding: 12px 20px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        #send-button:hover {
+            background-color: #3367d6;
+        }
+
+        /* 消息样式 */
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai-message {
+            background-color: #f1f3f4;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+
+        .system-message {
+            background-color: #fdecea;
+            color: #d93025;
+            margin: 10px auto;
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .message-sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* 帮助链接 */
+        .help-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .help-link a {
+            color: #4285f4;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .help-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* 管理面板 */
+        #admin-panel {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .admin-section {
+            margin-bottom: 20px;
+        }
+
+        .admin-section h2 {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .agent-list {
+            margin-bottom: 20px;
+        }
+
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .agent-actions button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: #fbbc04;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eaeaea;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #4285f4;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #5f6368;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #34a853;
+            color: white;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            #send-button {
+                padding: 12px 15px;
+            }
+        }
+
+        /* AI消息中的Markdown样式 */
+        .ai-content {
+            line-height: 1.6;
+        }
+        
+        .ai-content pre {
+            background-color: #f6f8fa;
+            border-radius: 5px;
+            padding: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .ai-content code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9em;
+        }
+        
+        .ai-content p {
+            margin: 10px 0;
+        }
+        
+        .ai-content ul, .ai-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .ai-content blockquote {
+            border-left: 4px solid #dfe2e5;
+            padding-left: 16px;
+            margin: 10px 0;
+            color: #666;
+        }
+        
+        .ai-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .ai-content th, .ai-content td {
+            border: 1px solid #dfe2e5;
+            padding: 6px 12px;
+            text-align: left;
+        }
+        
+        .ai-content img {
+            max-width: 100%;
+        }
+        
+        /* 复制按钮样式 */
+        .copy-btn {
+            background-color: #f1f3f4;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 12px;
+            color: #555;
+            margin-top: 8px;
+            display: block;
+            float: right;
+            clear: both;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #e0e3e6;
+            border-color: #d0d0d0;
+        }
+        
+        .copy-btn.copied {
+            background-color: #34a853;
+            color: white;
+            border-color: #2e8c4a;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .message-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        /* 设置按钮 */
+        .settings-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            margin-left: 15px;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-icon {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* 设置面板 */
+        #settings-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            width: 320px;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .settings-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #5f6368;
+        }
+        
+        .settings-group {
+            margin-bottom: 15px;
+        }
+        
+        .settings-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #4285f4;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .settings-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav-container">
+        <div class="logo">
+            <img src="tangzai.jpg" alt="汤仔Logo">
+            汤仔高效办公助手
+        </div>
+        <div class="nav-links">
+            <a href="faq.html" class="nav-link">常见问题</a>
+            <button id="settings-button" class="settings-btn" title="设置">
+                <svg class="settings-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M19.4 15C19.2669 15.3016 19.2272 15.6362 19.286 15.9606C19.3448 16.285 19.4995 16.5843 19.73 16.82L19.79 16.88C19.976 17.0657 20.1235 17.2863 20.2241 17.5291C20.3248 17.7719 20.3766 18.0322 20.3766 18.295C20.3766 18.5578 20.3248 18.8181 20.2241 19.0609C20.1235 19.3037 19.976 19.5243 19.79 19.71C19.6043 19.896 19.3837 20.0435 19.1409 20.1441C18.8981 20.2448 18.6378 20.2966 18.375 20.2966C18.1122 20.2966 17.8519 20.2448 17.6091 20.1441C17.3663 20.0435 17.1457 19.896 16.96 19.71L16.9 19.65C16.6643 19.4195 16.365 19.2648 16.0406 19.206C15.7162 19.1472 15.3816 19.1869 15.08 19.32C14.7842 19.4468 14.532 19.6572 14.3543 19.9255C14.1766 20.1938 14.0813 20.5082 14.08 20.83V21C14.08 21.5304 13.8693 22.0391 13.4942 22.4142C13.1191 22.7893 12.6104 23 12.08 23C11.5496 23 11.0409 22.7893 10.6658 22.4142C10.2907 22.0391 10.08 21.5304 10.08 21V20.91C10.0723 20.579 9.96512 20.258 9.77251 19.9887C9.5799 19.7194 9.31074 19.5143 9 19.4C8.69838 19.2669 8.36381 19.2272 8.03941 19.286C7.71502 19.3448 7.41568 19.4995 7.18 19.73L7.12 19.79C6.93425 19.976 6.71368 20.1235 6.47088 20.2241C6.22808 20.3248 5.96783 20.3766 5.705 20.3766C5.44217 20.3766 5.18192 20.3248 4.93912 20.2241C4.69632 20.1235 4.47575 19.976 4.29 19.79C4.10405 19.6043 3.95653 19.3837 3.85588 19.1409C3.75523 18.8981 3.70343 18.6378 3.70343 18.375C3.70343 18.1122 3.75523 17.8519 3.85588 17.6091C3.95653 17.3663 4.10405 17.1457 4.29 16.96L4.35 16.9C4.58054 16.6643 4.73519 16.365 4.794 16.0406C4.85282 15.7162 4.81312 15.3816 4.68 15.08C4.55324 14.7842 4.34276 14.532 4.07447 14.3543C3.80618 14.1766 3.49179 14.0813 3.17 14.08H3C2.46957 14.08 1.96086 13.8693 1.58579 13.4942C1.21071 13.1191 1 12.6104 1 12.08C1 11.5496 1.21071 11.0409 1.58579 10.6658C1.96086 10.2907 2.46957 10.08 3 10.08H3.09C3.42099 10.0723 3.742 9.96512 4.0113 9.77251C4.28059 9.5799 4.48572 9.31074 4.6 9C4.73312 8.69838 4.77282 8.36381 4.714 8.03941C4.65519 7.71502 4.50054 7.41568 4.27 7.18L4.21 7.12C4.02405 6.93425 3.87653 6.71368 3.77588 6.47088C3.67523 6.22808 3.62343 5.96783 3.62343 5.705C3.62343 5.44217 3.67523 5.18192 3.77588 4.93912C3.87653 4.69632 4.02405 4.47575 4.21 4.29C4.39575 4.10405 4.61632 3.95653 4.85912 3.85588C5.10192 3.75523 5.36217 3.70343 5.625 3.70343C5.88783 3.70343 6.14808 3.75523 6.39088 3.85588C6.63368 3.95653 6.85425 4.10405 7.04 4.29L7.1 4.35C7.33568 4.58054 7.63502 4.73519 7.95941 4.794C8.28381 4.85282 8.61838 4.81312 8.92 4.68H9C9.29577 4.55324 9.54802 4.34276 9.72569 4.07447C9.90337 3.80618 9.99872 3.49179 10 3.17V3C10 2.46957 10.2107 1.96086 10.5858 1.58579C10.9609 1.21071 11.4696 1 12 1C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V3.09C14.0013 3.41179 14.0966 3.72618 14.2743 3.99447C14.452 4.26276 14.7042 4.47324 15 4.6C15.3016 4.73312 15.6362 4.77282 15.9606 4.714C16.285 4.65519 16.5843 4.50054 16.82 4.27L16.88 4.21C17.0657 4.02405 17.2863 3.87653 17.5291 3.77588C17.7719 3.67523 18.0322 3.62343 18.295 3.62343C18.5578 3.62343 18.8181 3.67523 19.0609 3.77588C19.3037 3.87653 19.5243 4.02405 19.71 4.21C19.896 4.39575 20.0435 4.61632 20.1441 4.85912C20.2448 5.10192 20.2966 5.36217 20.2966 5.625C20.2966 5.88783 20.2448 6.14808 20.1441 6.39088C20.0435 6.63368 19.896 6.85425 19.71 7.04L19.65 7.1C19.4195 7.33568 19.2648 7.63502 19.206 7.95941C19.1472 8.28381 19.1869 8.61838 19.32 8.92V9C19.4468 9.29577 19.6572 9.54802 19.9255 9.72569C20.1938 9.90337 20.5082 9.99872 20.83 10H21C21.5304 10 22.0391 10.2107 22.4142 10.5858C22.7893 10.9609 23 11.4696 23 12C23 12.5304 22.7893 13.0391 22.4142 13.4142C22.0391 13.7893 21.5304 14 21 14H20.91C20.5882 14.0013 20.2738 14.0966 20.0055 14.2743C19.7372 14.452 19.5268 14.7042 19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="mode-switcher">
+                <label for="admin-mode">管理员模式</label>
+                <input type="checkbox" id="admin-mode">
+            </div>
+        </div>
+    </div>
+
+    <!-- 智能体选择器 -->
+    <select id="agent-selector" class="agent-selector">
+        <option value="" disabled selected>请选择智能体</option>
+        <!-- 智能体选项将通过JavaScript动态加载 -->
+    </select>
+
+    <!-- 聊天区域 -->
+    <div id="chat-container"></div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="输入消息..." />
+        <button id="send-button">发送</button>
+    </div>
+
+    <!-- 帮助链接 -->
+    <div class="help-link">
+        <a href="faq.html">遇到问题？查看常见问题解答</a>
+    </div>
+
+    <!-- 管理员面板 -->
+    <div id="admin-panel">
+        <div class="admin-section">
+            <h2>智能体管理</h2>
+            <div class="agent-list" id="agent-list">
+                <!-- 智能体列表将通过JavaScript动态加载 -->
+            </div>
+            <button id="add-agent-btn" class="btn btn-success">添加新智能体</button>
+        </div>
+
+        <div class="admin-section" id="agent-form-container" style="display: none;">
+            <h2 id="form-title">添加智能体</h2>
+            <form id="agent-form">
+                <input type="hidden" id="agent-id">
+                <div class="form-group">
+                    <label for="agent-name">智能体名称</label>
+                    <input type="text" id="agent-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="api-url">API 地址</label>
+                    <input type="text" id="api-url" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="api-key">API 密钥</label>
+                    <input type="text" id="api-key" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="model">模型</label>
+                    <input type="text" id="model" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="system-prompt">系统提示词</label>
+                    <textarea id="system-prompt" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="temperature">温度 (0-2)</label>
+                    <input type="number" id="temperature" class="form-control" min="0" max="2" step="0.1" value="0.7">
+                </div>
+                <div class="form-group">
+                    <label for="max-tokens">最大 Tokens</label>
+                    <input type="number" id="max-tokens" class="form-control" min="1" value="1024">
+                </div>
+                <div class="form-buttons">
+                    <button type="button" id="cancel-btn" class="btn btn-secondary">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="overlay" id="settings-overlay"></div>
+    <div id="settings-panel">
+        <div class="settings-header">
+            <div class="settings-title">显示设置</div>
+            <button class="close-btn" id="close-settings">&times;</button>
+        </div>
+        <div class="settings-group">
+            <div class="settings-option">
+                <div>
+                    <div>启用Markdown渲染</div>
+                    <div class="settings-description">将AI回复渲染为带格式的文本</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="markdown-enabled" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-option">
+                <div>
+                    <div>代码高亮</div>
+                    <div class="settings-description">为代码块添加语法高亮</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="code-highlight-enabled" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM 元素
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const agentSelector = document.getElementById('agent-selector');
+        const adminModeCheckbox = document.getElementById('admin-mode');
+        const adminPanel = document.getElementById('admin-panel');
+        const agentList = document.getElementById('agent-list');
+        const addAgentBtn = document.getElementById('add-agent-btn');
+        const agentFormContainer = document.getElementById('agent-form-container');
+        const agentForm = document.getElementById('agent-form');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const formTitle = document.getElementById('form-title');
+        
+        // 存储对话历史
+        let messageHistory = [];
+        
+        // 当前选中的智能体
+        let currentAgent = null;
+        
+        // 初始化智能体列表
+        let agents = JSON.parse(localStorage.getItem('agents')) || [
+            // 默认智能体，基于之前的配置
+            {
+                id: '1',
+                name: '默认智能体',
+                apiUrl: 'https://aihubmix.com/v1/chat/completions',
+                apiKey: 'sk-tHOx8uUaar3ob9x69e6323DaD2B6497b90E56077B2FcC96b',
+                model: 'gemini-2.0-flash',
+                systemPrompt: '',
+                temperature: 0.8,
+                maxTokens: 1024
+            }
+        ];
+        
+        // 保存智能体配置到本地存储
+        function saveAgents() {
+            localStorage.setItem('agents', JSON.stringify(agents));
+        }
+        
+        // 加载智能体选择器
+        function loadAgentSelector() {
+            // 清空现有选项
+            agentSelector.innerHTML = '<option value="" disabled selected>请选择智能体</option>';
+            
+            // 添加智能体选项
+            agents.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent.id;
+                option.textContent = agent.name;
+                agentSelector.appendChild(option);
+            });
+        }
+        
+        // 加载智能体列表（管理员面板）
+        function loadAgentList() {
+            agentList.innerHTML = '';
+            
+            agents.forEach(agent => {
+                const agentItem = document.createElement('div');
+                agentItem.className = 'agent-item';
+                
+                const agentInfo = document.createElement('div');
+                agentInfo.className = 'agent-info';
+                agentInfo.textContent = agent.name;
+                
+                const agentActions = document.createElement('div');
+                agentActions.className = 'agent-actions';
+                
+                const editBtn = document.createElement('button');
+                editBtn.className = 'edit-btn';
+                editBtn.textContent = '编辑';
+                editBtn.onclick = () => editAgent(agent.id);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = '删除';
+                deleteBtn.onclick = () => deleteAgent(agent.id);
+                
+                agentActions.appendChild(editBtn);
+                agentActions.appendChild(deleteBtn);
+                
+                agentItem.appendChild(agentInfo);
+                agentItem.appendChild(agentActions);
+                
+                agentList.appendChild(agentItem);
+            });
+        }
+        
+        // 编辑智能体
+        function editAgent(agentId) {
+            const agent = agents.find(a => a.id === agentId);
+            if (!agent) return;
+            
+            // 填充表单
+            document.getElementById('agent-id').value = agent.id;
+            document.getElementById('agent-name').value = agent.name;
+            document.getElementById('api-url').value = agent.apiUrl;
+            document.getElementById('api-key').value = agent.apiKey;
+            document.getElementById('model').value = agent.model;
+            document.getElementById('system-prompt').value = agent.systemPrompt || '';
+            document.getElementById('temperature').value = agent.temperature;
+            document.getElementById('max-tokens').value = agent.maxTokens;
+            
+            // 显示表单
+            formTitle.textContent = '编辑智能体';
+            agentFormContainer.style.display = 'block';
+        }
+        
+        // 删除智能体
+        function deleteAgent(agentId) {
+            if (confirm('确定要删除此智能体吗？')) {
+                agents = agents.filter(agent => agent.id !== agentId);
+                saveAgents();
+                loadAgentList();
+                loadAgentSelector();
+            }
+        }
+        
+        // 添加新智能体
+        function addAgent() {
+            // 重置表单
+            agentForm.reset();
+            document.getElementById('agent-id').value = '';
+            
+            // 显示表单
+            formTitle.textContent = '添加智能体';
+            agentFormContainer.style.display = 'block';
+        }
+        
+        // 取消编辑/添加
+        function cancelForm() {
+            agentFormContainer.style.display = 'none';
+        }
+        
+        // 保存智能体
+        function saveAgent(e) {
+            e.preventDefault();
+            
+            const agentId = document.getElementById('agent-id').value;
+            const newAgent = {
+                id: agentId || Date.now().toString(),
+                name: document.getElementById('agent-name').value,
+                apiUrl: document.getElementById('api-url').value,
+                apiKey: document.getElementById('api-key').value,
+                model: document.getElementById('model').value,
+                systemPrompt: document.getElementById('system-prompt').value,
+                temperature: parseFloat(document.getElementById('temperature').value),
+                maxTokens: parseInt(document.getElementById('max-tokens').value)
+            };
+            
+            if (agentId) {
+                // 编辑现有智能体
+                const index = agents.findIndex(a => a.id === agentId);
+                if (index !== -1) {
+                    agents[index] = newAgent;
+                }
+            } else {
+                // 添加新智能体
+                agents.push(newAgent);
+            }
+            
+            saveAgents();
+            loadAgentList();
+            loadAgentSelector();
+            cancelForm();
+        }
+        
+        // 切换管理员模式
+        function toggleAdminMode() {
+            if (adminModeCheckbox.checked) {
+                adminPanel.style.display = 'block';
+                loadAgentList();
+            } else {
+                adminPanel.style.display = 'none';
+            }
+        }
+        
+        // 选择智能体
+        function selectAgent() {
+            const agentId = agentSelector.value;
+            currentAgent = agents.find(agent => agent.id === agentId);
+            
+            // 清空聊天记录
+            chatContainer.innerHTML = '';
+            messageHistory = [];
+            
+            if (currentAgent) {
+                displayMessage('系统', `已选择智能体：${currentAgent.name}`, 'system-message');
+            }
+        }
+        
+        // 发送消息
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            if (!currentAgent) {
+                displayMessage('系统', '请先选择一个智能体', 'system-message');
+                return;
+            }
+            
+            // 显示用户消息
+            displayMessage('你', message, 'user-message');
+            
+            // 添加到消息历史
+            messageHistory.push({ role: 'user', content: message });
+            
+            // 清空输入框
+            userInput.value = '';
+            
+            // 调用API
+            callAPI(message);
+        }
+        
+        // 调用API
+        async function callAPI(userMessage) {
+            // 预先显示AI回复的标记
+            const aiMessageElement = document.createElement('div');
+            aiMessageElement.className = 'message ai-message';
+            
+            // 创建消息头部
+            const messageHeader = document.createElement('div');
+            messageHeader.className = 'message-header';
+            
+            // 创建发送者标签
+            const senderLabel = document.createElement('span');
+            senderLabel.className = 'message-sender';
+            senderLabel.textContent = `${currentAgent.name}: `;
+            
+            // 添加到消息头部
+            messageHeader.appendChild(senderLabel);
+            
+            // 创建内容容器
+            const aiContent = document.createElement('div');
+            aiContent.className = 'ai-content';
+            
+            // 组装消息元素
+            aiMessageElement.appendChild(messageHeader);
+            aiMessageElement.appendChild(aiContent);
+            
+            // 添加到聊天容器
+            chatContainer.appendChild(aiMessageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            const messages = [...messageHistory];
+            
+            // 如果有系统提示词，添加到消息历史开头
+            if (currentAgent.systemPrompt) {
+                messages.unshift({ role: 'system', content: currentAgent.systemPrompt });
+            }
+            
+            const requestData = {
+                model: currentAgent.model,
+                messages: messages,
+                temperature: currentAgent.temperature,
+                max_tokens: currentAgent.maxTokens,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0,
+                stream: true
+            };
+            
+            try {
+                const response = await fetch(currentAgent.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentAgent.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullResponse = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                            try {
+                                const jsonStr = line.substring(6); // 移除 'data: ' 前缀
+                                const data = JSON.parse(jsonStr);
+                                
+                                if (data.choices && data.choices.length > 0) {
+                                    if (data.choices[0].delta && data.choices[0].delta.content) {
+                                        const content = data.choices[0].delta.content;
+                                        fullResponse += content;
+                                        
+                                        // 根据设置决定是否使用Markdown渲染
+                                        if (settings.markdownEnabled) {
+                                            aiContent.innerHTML = marked.parse(fullResponse);
+                                            
+                                            // 根据设置决定是否应用代码高亮
+                                            if (settings.codeHighlightEnabled) {
+                                                aiContent.querySelectorAll('pre code').forEach((block) => {
+                                                    hljs.highlightElement(block);
+                                                });
+                                            }
+                                        } else {
+                                            // 纯文本显示，保留换行
+                                            aiContent.textContent = fullResponse;
+                                        }
+                                        
+                                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                                    }
+                                }
+                            } catch (error) {
+                                // JSON解析错误，忽略
+                            }
+                        }
+                    }
+                }
+                
+                // 添加到消息历史
+                if (fullResponse) {
+                    messageHistory.push({ role: 'assistant', content: fullResponse });
+                    
+                    // 流式响应结束后添加复制按钮到内容末尾
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '复制';
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(fullResponse).then(() => {
+                            copyBtn.textContent = '已复制';
+                            copyBtn.classList.add('copied');
+                            
+                            setTimeout(() => {
+                                copyBtn.textContent = '复制';
+                                copyBtn.classList.remove('copied');
+                            }, 2000);
+                        });
+                    };
+                    
+                    // 将复制按钮添加到 aiContent 元素的末尾
+                    aiContent.appendChild(copyBtn);
+                    // 清理可能因为浮动按钮导致的布局问题
+                    const clearer = document.createElement('div');
+                    clearer.style.clear = 'both';
+                    aiContent.appendChild(clearer);
+                    
+                    // 确保滚动到底部以显示按钮
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+                
+            } catch (error) {
+                displayMessage('系统', `API调用失败: ${error.message}`, 'system-message');
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 显示消息
+        function displayMessage(sender, message, className) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${className}`;
+            
+            if (className === 'system-message') {
+                // 系统消息使用简单布局
+                messageElement.innerHTML = `<span class="message-sender">${sender}: </span>${message}`;
+            } else if (className === 'user-message') {
+                // 用户消息
+                const messageHeader = document.createElement('div');
+                messageHeader.className = 'message-header';
+                
+                const senderLabel = document.createElement('span');
+                senderLabel.className = 'message-sender';
+                senderLabel.textContent = `${sender}: `;
+                
+                const messageContent = document.createElement('div');
+                messageContent.textContent = message;
+                
+                messageHeader.appendChild(senderLabel);
+                messageElement.appendChild(messageHeader);
+                messageElement.appendChild(messageContent);
+            }
+            
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 事件监听器
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        agentSelector.addEventListener('change', selectAgent);
+        adminModeCheckbox.addEventListener('change', toggleAdminMode);
+        addAgentBtn.addEventListener('click', addAgent);
+        cancelBtn.addEventListener('click', cancelForm);
+        agentForm.addEventListener('submit', saveAgent);
+        
+        // 初始化页面
+        loadAgentSelector();
+        
+        // 显示欢迎消息
+        displayMessage('系统', '欢迎使用智能体聚合平台！请选择一个智能体开始对话。', 'system-message');
+
+        // DOM元素 - 设置相关
+        const settingsButton = document.getElementById('settings-button');
+        const settingsPanel = document.getElementById('settings-panel');
+        const settingsOverlay = document.getElementById('settings-overlay');
+        const closeSettings = document.getElementById('close-settings');
+        const markdownEnabled = document.getElementById('markdown-enabled');
+        const codeHighlightEnabled = document.getElementById('code-highlight-enabled');
+        
+        // 设置状态
+        let settings = JSON.parse(localStorage.getItem('settings')) || {
+            markdownEnabled: true,
+            codeHighlightEnabled: true
+        };
+        
+        // 初始化设置开关状态
+        markdownEnabled.checked = settings.markdownEnabled;
+        codeHighlightEnabled.checked = settings.codeHighlightEnabled;
+        
+        // 显示和隐藏设置面板
+        function toggleSettingsPanel() {
+            settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+            settingsOverlay.style.display = settingsPanel.style.display;
+        }
+        
+        // 保存设置
+        function saveSettings() {
+            settings.markdownEnabled = markdownEnabled.checked;
+            settings.codeHighlightEnabled = codeHighlightEnabled.checked;
+            localStorage.setItem('settings', JSON.stringify(settings));
+        }
+        
+        // 关闭设置面板
+        function closeSettingsPanel() {
+            settingsPanel.style.display = 'none';
+            settingsOverlay.style.display = 'none';
+        }
+        
+        // 设置事件监听器
+        settingsButton.addEventListener('click', toggleSettingsPanel);
+        closeSettings.addEventListener('click', closeSettingsPanel);
+        settingsOverlay.addEventListener('click', closeSettingsPanel);
+        markdownEnabled.addEventListener('change', saveSettings);
+        codeHighlightEnabled.addEventListener('change', saveSettings);
+    </script>
+</body>
+</html> 
