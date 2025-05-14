@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>启动智能体聚合平台</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #4285f4;
+        }
+        .step {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #4285f4;
+        }
+        .command {
+            background-color: #f1f3f4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智能体聚合平台 - 启动指南</h1>
+    
+    <div class="step">
+        <h2>步骤1: 启动本地服务器</h2>
+        <p>打开终端（命令行），进入项目目录，然后运行以下命令：</p>
+        <div class="command">python -m http.server 8000</div>
+        <p>如果你使用Python 2，请使用：</p>
+        <div class="command">python -m SimpleHTTPServer 8000</div>
+    </div>
+    
+    <div class="step">
+        <h2>步骤2: 访问网站</h2>
+        <p>启动服务器后，在浏览器中访问下面的地址：</p>
+        <div class="command">http://localhost:8000/</div>
+        <a href="http://localhost:8000/" class="button">打开网站</a>
+    </div>
+    
+    <div class="step">
+        <h2>常见问题</h2>
+        <ul>
+            <li><strong>浏览器缓存问题</strong>: 如果界面显示异常，请尝试强制刷新页面 (Windows: Ctrl+F5, Mac: Cmd+Shift+R)</li>
+            <li><strong>端口被占用</strong>: 如果8000端口被占用，请尝试更换端口号，例如 <code>python -m http.server 8080</code></li>
+            <li><strong>CORS错误</strong>: 必须通过HTTP服务器访问，直接打开HTML文件会导致跨域错误</li>
+        </ul>
+    </div>
+</body>
+</html> 
