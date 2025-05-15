@@ -245,6 +245,168 @@
         </div>
     </div>
     
+    <div class="faq-item">
+        <div class="faq-question">13. 如何导出Word文档？</div>
+        <div class="faq-answer">
+            <p>平台提供了便捷的Markdown转Word文档功能：</p>
+            <ul>
+                <li>每条AI回复后都有"导出Word"按钮，点击即可下载</li>
+                <li>导出的Word文档会自动保留标题层级、粗体、斜体和代码块等格式</li>
+                <li>文件名默认包含日期和时间信息（格式为：文件名_YYYYMMDD_HHMM.docx），方便归档管理</li>
+                <li>生成的是标准.docx格式，可以使用Microsoft Word或其他兼容软件打开和编辑</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">14. 如何使用Python图形化配置工具？</div>
+        <div class="faq-answer">
+            <p>如果您不想通过网页界面管理智能体，可以使用我们提供的Python图形化工具：</p>
+            <ol>
+                <li>确保已安装Python 3.6+</li>
+                <li>在项目目录下运行：<code>python agent_editor.py</code></li>
+                <li>通过图形界面添加、编辑、删除或复制智能体</li>
+                <li>完成后点击"保存所有到agents.json"保存配置</li>
+                <li>刷新网页即可看到更新后的智能体列表</li>
+            </ol>
+            <p>该工具还提供了全面的备份和恢复功能：</p>
+            <ul>
+                <li><strong>自动备份</strong>：每次保存到agents.json时，系统会自动创建带时间戳的备份</li>
+                <li><strong>手动备份</strong>：点击"创建备份"按钮可随时手动创建备份</li>
+                <li><strong>恢复备份</strong>：点击"恢复备份"可从之前的备份中恢复配置</li>
+                <li><strong>管理备份</strong>：点击"管理备份"可查看、删除备份文件</li>
+                <li><strong>智能清理</strong>：系统自动保留最近30个备份，并清理旧备份以节省空间</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">15. 移动设备使用有哪些特别注意事项？</div>
+        <div class="faq-answer">
+            <p>在移动设备（手机、平板）上使用本平台时：</p>
+            <ul>
+                <li>系统会自动识别并启用"移动设备增强存储模式"，提供以下额外功能：
+                    <ul>
+                        <li>多重存储备份：同时使用localStorage、sessionStorage和内存存储</li>
+                        <li>自动恢复机制：如果主存储失效，系统会自动从备份恢复</li>
+                        <li>定期自动保存：每30秒自动保存一次当前配置</li>
+                        <li>每日备份：创建带时间戳的备份，增加数据安全性</li>
+                        <li>动态恢复：启动时自动尝试从多个位置恢复数据</li>
+                    </ul>
+                </li>
+                <li>如果您发现刷新后智能体配置仍然丢失，尝试以下方法：
+                    <ul>
+                        <li>确认浏览器未开启"无痕模式"（这种模式下存储被限制）</li>
+                        <li>检查浏览器设置中"网站数据存储"权限是否已开启</li>
+                        <li>使用Python图形化工具编辑agents.json文件，而不是依赖浏览器存储</li>
+                        <li>对于iOS设备，确保没有开启"阻止所有cookies"设置</li>
+                        <li>尝试使用不同的浏览器（如Chrome、Safari、Firefox）</li>
+                    </ul>
+                </li>
+                <li>存储故障排查：
+                    <ul>
+                        <li>如果看到"存储保护模式已启用"的提示，表明系统检测到可能的存储问题</li>
+                        <li>如果浏览器报告"存储配额已满"，可以清理其他网站的缓存腾出空间</li>
+                        <li>某些移动浏览器有默认7天的数据过期时间，请定期备份重要配置</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">16. 什么是独立Markdown转Word导出工具？</div>
+        <div class="faq-answer">
+            <p>为了使Markdown转Word的功能更加灵活，我们提供了一个独立的导出工具，您可以在不修改原有代码的情况下使用它：</p>
+            <h4>包含的文件</h4>
+            <ul>
+                <li><code>markdown-to-word.js</code> - 独立的导出工具库</li>
+                <li><code>markdown-to-word-demo.html</code> - 演示页面</li>
+                <li><code>markdown-to-word-readme.md</code> - 详细使用说明</li>
+            </ul>
+            <h4>主要特性</h4>
+            <ul>
+                <li>独立运行，不影响原有代码</li>
+                <li>完整支持Markdown语法（标题、列表、代码块、粗体、斜体等）</li>
+                <li>生成格式精美的Word文档(.docx)</li>
+                <li>提供简单的API，易于集成到任何项目</li>
+            </ul>
+            <h4>快速使用</h4>
+            <p>1. 在HTML中引入必要文件：</p>
+            <div class="code">
+&lt;script src="docx.js"&gt;&lt;/script&gt;
+&lt;script src="FileSaver.min.js"&gt;&lt;/script&gt;
+&lt;script src="markdown-to-word.js"&gt;&lt;/script&gt;
+            </div>
+            <p>2. 使用JavaScript调用导出功能：</p>
+            <div class="code">
+// 直接转换并下载
+window.MarkdownToWord.convert(markdownText, '文件名');
+
+// 或创建导出按钮
+const button = window.MarkdownToWord.createButton(container, markdownText, '文件名');
+            </div>
+            <p>更多详细信息，请参考 <code>markdown-to-word-readme.md</code> 文件或查看 <code>markdown-to-word-demo.html</code> 演示页面。</p>
+        </div>
+    </div>
+    
+    <div class="faq-item">
+        <div class="faq-question">17. 如何将平台部署到服务器？</div>
+        <div class="faq-answer">
+            <p>如果您想将此项目部署到Web服务器，可以按照以下几种方法操作：</p>
+            
+            <h4>方法一：使用传统Web服务器（Apache/Nginx）</h4>
+            <ol>
+                <li>将所有文件上传到您的Web服务器目录</li>
+                <li>确保服务器配置为提供静态文件服务</li>
+                <li>访问相应的URL即可使用</li>
+            </ol>
+            <p>例如，使用Nginx的配置：</p>
+            <div class="code">
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/wuren-ai-platform;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+            </div>
+            
+            <h4>方法二：使用GitHub Pages（免费托管）</h4>
+            <ol>
+                <li>Fork这个仓库到您的GitHub账号</li>
+                <li>在仓库设置中启用GitHub Pages（Settings > Pages）</li>
+                <li>选择main分支作为源</li>
+                <li>稍等片刻，您的网站就会在<code>https://username.github.io/wuren-ai-platform/</code>上线</li>
+            </ol>
+            
+            <h4>方法三：使用Node.js提供服务</h4>
+            <p>如果您已经安装了Node.js，可以使用http-server包：</p>
+            <div class="code">
+# 安装http-server
+npm install -g http-server
+
+# 进入项目目录
+cd wuren-ai-platform
+
+# 启动服务
+http-server -p 8080
+            </div>
+            <p>然后访问 http://localhost:8080</p>
+            
+            <h4>注意事项</h4>
+            <ul>
+                <li><strong>API密钥安全</strong>：项目中的API密钥存储在浏览器本地存储中。如果部署为公开服务，请注意API密钥的安全性。</li>
+                <li><strong>CORS策略</strong>：如果您使用的API服务有CORS限制，可能需要配置代理服务器。</li>
+                <li><strong>本地文件依赖</strong>：项目使用了本地文件<code>docx.js</code>和<code>FileSaver.min.js</code>，请确保这些文件正确上传。</li>
+                <li><strong>浏览器兼容性</strong>：建议使用现代浏览器（Chrome、Edge、Firefox、Safari）访问。</li>
+            </ul>
+        </div>
+    </div>
+    
     <footer>
         <p>© 2023 智能体聚合平台 | <a href="index.html">返回主页</a></p>
     </footer>

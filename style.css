@@ -6,7 +6,7 @@
     --color-secondary: #5f6368;
     --color-success: #34a853;
     --color-warning: #fbbc04;
-    --color-danger: #ea4335;
+    --color-danger: #8e24aa;
     --color-text-primary: #333;
     --color-text-secondary: #666;
     --color-text-light: white;
@@ -98,6 +98,52 @@ body {
     margin-right: 10px;
 }
 
+/* 平台介绍横幅 */
+.platform-banner {
+    background: linear-gradient(45deg, rgb(63, 18, 135), rgb(107, 70, 193));
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.platform-banner::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 1;
+}
+
+.platform-banner h1 {
+    font-size: 1.4rem;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.platform-banner p {
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.4;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+
 /* 智能体选择器 */
 .agent-selector {
     width: 100%;
@@ -107,6 +153,7 @@ body {
     border: 1px solid #ccc;
     background-color: white;
     font-size: 1rem;
+    color: rgb(76, 18, 161);
 }
 
 /* 聊天容器 */
@@ -124,31 +171,51 @@ body {
 /* 输入区域 */
 #input-container {
     display: flex;
-    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+#clear-button {
+    background-color: rgb(76, 18, 161);  /* 改为与logo相同的颜色 */
+    opacity: 0.7;
+    color: white;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: opacity 0.3s;
+}
+
+#clear-button:hover {
+    opacity: 1;
 }
 
 #user-input {
-    flex-grow: 1;
-    padding: 12px;
-    border: 1px solid #eaeaea;
-    border-radius: 8px;
-    margin-right: 10px;
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0;
     font-size: 1rem;
 }
 
 #send-button {
-    padding: 12px 20px;
-    background-color: #4285f4;
+    background-color: rgb(76, 18, 161);  /* 改为与logo相同的颜色 */
+    opacity: 0.7;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0 5px 5px 0;
+    padding: 12px 20px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.2s;
+    transition: opacity 0.3s;
 }
 
 #send-button:hover {
-    background-color: #3367d6;
+    opacity: 1;
+}
+
+#send-button:hover {
+    background-color: #6a1b9a;
 }
 
 /* 消息样式 */
@@ -174,8 +241,8 @@ body {
 }
 
 .system-message {
-    background-color: #fdecea;
-    color: #d93025;
+    background-color: rgba(107, 70, 193, 0.1);
+    color: rgb(88, 43, 163);
     margin: 10px auto;
     text-align: center;
     max-width: 100%;
@@ -252,7 +319,7 @@ body {
 }
 
 .delete-btn {
-    background-color: #ea4335;
+    background-color: #8e24aa;
     color: white;
 }
 
@@ -316,7 +383,7 @@ textarea.form-control {
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 15px;
     }
     
     .message {
@@ -325,6 +392,18 @@ textarea.form-control {
     
     #send-button {
         padding: 12px 15px;
+    }
+    
+    .platform-banner {
+        padding: 10px 15px;
+    }
+    
+    .platform-banner h1 {
+        font-size: 1.2rem;
+    }
+    
+    .platform-banner p {
+        font-size: 0.8rem;
     }
 }
 
@@ -387,9 +466,9 @@ textarea.form-control {
     font-size: 12px;
     color: #555;
     margin-top: 8px;
-    display: block;
+    display: inline-block;
     float: right;
-    clear: both;
+    margin-right: 0;
     transition: background-color 0.2s, color 0.2s;
 }
 
@@ -545,4 +624,28 @@ input:checked + .toggle-slider:before {
     bottom: 0;
     background-color: rgba(0,0,0,0.5);
     z-index: 999;
+}
+
+/* Word导出按钮 */
+.word-btn {
+    float: right;
+    margin-top: 8px;
+    margin-right: 5px;
+    padding: 3px 8px;
+    background-color: #4CAF50; /* 绿色 */
+    color: white;
+    border: 1px solid #409945;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s, color 0.2s;
+    display: inline-block; /* 确保按钮是内联块元素 */
+}
+
+.word-btn:hover {
+    background-color: #45a049; /* 深绿色 */
+}
+
+.word-btn:active {
+    background-color: #3e8e41; /* 更深的绿色 */
 }

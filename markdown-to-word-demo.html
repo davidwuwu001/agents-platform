@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 转 Word 示例</title>
+    <!-- 添加favicon，避免404错误 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    <!-- 添加 markdown 解析库 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js"></script>
+    <!-- 添加代码高亮库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/styles/github.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <!-- 添加docx.js用于生成Word文档 -->
+    <script src="docx.js"></script>
+    <!-- 添加FileSaver.js用于保存文件 -->
+    <script src="FileSaver.min.js"></script>
+    <!-- 引入我们创建的markdown-to-word.js -->
+    <script src="markdown-to-word.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #6200ee;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3700b3;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .input-section, .preview-section {
+            flex: 1;
+        }
+        textarea {
+            width: 100%;
+            height: 400px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .preview {
+            width: 100%;
+            height: 400px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        button {
+            background-color: #6200ee;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .word-btn {
+            background-color: #2e7d32;
+        }
+        .word-btn:hover {
+            background-color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <h1>Markdown 转 Word 示例</h1>
+    
+    <div class="controls">
+        <button id="load-sample">加载示例内容</button>
+        <button id="export-word" class="word-btn">导出为Word文档</button>
+    </div>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2>Markdown 输入</h2>
+            <textarea id="markdown-input" placeholder="在这里输入Markdown格式的文本..."></textarea>
+        </div>
+        <div class="preview-section">
+            <h2>预览效果</h2>
+            <div id="markdown-preview" class="preview"></div>
+        </div>
+    </div>
+    
+    <h2>使用说明</h2>
+    <p>1. 在左侧输入框中输入Markdown格式的文本</p>
+    <p>2. 右侧会实时显示渲染后的效果</p>
+    <p>3. 点击"导出为Word文档"按钮将内容导出为Word文档</p>
+    <p>4. 您也可以点击"加载示例内容"按钮来查看演示</p>
+    
+    <h2>如何在您的项目中使用</h2>
+    <p>只需要在您的HTML中引入以下三个文件：</p>
+    <pre><code>&lt;script src="docx.js"&gt;&lt;/script&gt;
+&lt;script src="FileSaver.min.js"&gt;&lt;/script&gt;
+&lt;script src="markdown-to-word.js"&gt;&lt;/script&gt;</code></pre>
+    
+    <p>然后使用以下JavaScript代码导出Word：</p>
+    <pre><code>// 转换Markdown为Word并下载
+window.MarkdownToWord.convert(markdownText, '文件名');
+
+// 或者创建一个导出按钮
+const button = window.MarkdownToWord.createButton(
+    containerElement, 
+    markdownText, 
+    '文件名'
+);</code></pre>
+
+    <script>
+        // 示例Markdown文本
+        const sampleMarkdown = `# Markdown示例文档
+
+## 介绍
+
+这是一个**Markdown**格式的示例文档，用于展示*Markdown转Word*功能。
+
+## 功能特点
+
+- 支持**粗体**、*斜体*等样式
+- 支持多级标题（# ## ### ####）
+- 支持无序列表
+- 支持代码块
+
+## 代码示例
+
+这是一段行内代码 \`const x = 1;\`
+
+下面是一个代码块：
+
+\`\`\`javascript
+function hello() {
+  console.log("Hello, World!");
+  return true;
+}
+\`\`\`
+
+## 总结
+
+通过这个示例，我们演示了如何将Markdown文本转换为Word文档，并保留原始的格式和样式。`;
+
+        // DOM元素
+        const markdownInput = document.getElementById('markdown-input');
+        const markdownPreview = document.getElementById('markdown-preview');
+        const loadSampleBtn = document.getElementById('load-sample');
+        const exportWordBtn = document.getElementById('export-word');
+        
+        // 更新预览
+        function updatePreview() {
+            const markdown = markdownInput.value;
+            markdownPreview.innerHTML = marked.parse(markdown);
+            
+            // 应用代码高亮
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        }
+        
+        // 加载示例内容
+        loadSampleBtn.addEventListener('click', () => {
+            markdownInput.value = sampleMarkdown;
+            updatePreview();
+        });
+        
+        // 导出Word文档
+        exportWordBtn.addEventListener('click', () => {
+            const markdown = markdownInput.value;
+            if (!markdown.trim()) {
+                alert('请先输入一些Markdown文本');
+                return;
+            }
+            
+            // 使用我们的MarkdownToWord库导出Word
+            window.MarkdownToWord.convert(markdown, 'Markdown示例');
+        });
+        
+        // 实时更新预览
+        markdownInput.addEventListener('input', updatePreview);
+        
+        // 初始加载示例
+        markdownInput.value = sampleMarkdown;
+        updatePreview();
+    </script>
+</body>
+</html> 

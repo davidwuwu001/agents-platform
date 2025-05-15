@@ -3,12 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能体聚合平台</title>
+    <title>提效智能体聚合平台</title>
+    <!-- 添加错误捕获代码 -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            // 创建错误信息元素
+            const errorDiv = document.createElement('div');
+            errorDiv.style.backgroundColor = '#ffebee';
+            errorDiv.style.color = '#b71c1c';
+            errorDiv.style.padding = '15px';
+            errorDiv.style.margin = '15px 0';
+            errorDiv.style.borderRadius = '5px';
+            errorDiv.style.border = '1px solid #ef9a9a';
+            errorDiv.style.fontFamily = 'monospace';
+            errorDiv.style.whiteSpace = 'pre-wrap';
+            errorDiv.innerHTML = `<strong>页面加载出错:</strong><br>${message}<br>文件: ${source}<br>行号: ${lineno}, 列号: ${colno}<br>${error ? error.stack : ''}`;
+            
+            // 页面加载完成后添加错误信息
+            if (document.body) {
+                document.body.prepend(errorDiv);
+            } else {
+                window.addEventListener('DOMContentLoaded', function() {
+                    document.body.prepend(errorDiv);
+                });
+            }
+            
+            // 返回true阻止默认错误处理
+            return true;
+        };
+    </script>
+    <!-- 添加favicon，避免404错误 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <!-- 添加 markdown 解析库 -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <!-- 添加代码高亮库 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.3.1/styles/github.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.3.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/styles/github.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <!-- 添加docx.js用于生成Word文档 - 使用本地文件 -->
+    <script src="docx.js"></script>
+    <!-- 添加FileSaver.js用于保存文件 - 使用本地文件 -->
+    <script src="FileSaver.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,10 +50,9 @@
     <div class="nav-container">
         <div class="logo">
             <img src="tangzai.jpg" alt="汤仔Logo">
-            汤仔高效办公助手
+            汤仔高效智能助手
         </div>
         <div class="nav-links">
-            <a href="faq.html" class="nav-link">常见问题</a>
             <button id="settings-button" class="settings-btn" title="设置">
                 <svg class="settings-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -33,6 +66,14 @@
         </div>
     </div>
 
+    <!-- 平台介绍横幅 -->
+    <div class="platform-banner">
+        <div class="banner-content">
+            <h1>AI+工具，效率倍增</h1>
+            <p>连接顶尖大模型，智能助手让工作更高效</p>
+        </div>
+    </div>
+
     <!-- 智能体选择器 -->
     <select id="agent-selector" class="agent-selector">
         <option value="" disabled selected>请选择智能体</option>
@@ -42,6 +83,7 @@
     <!-- 聊天区域 -->
     <div id="chat-container"></div>
     <div id="input-container">
+        <button id="clear-button" title="清除聊天记录">清除</button>
         <input type="text" id="user-input" placeholder="输入消息..." />
         <button id="send-button">发送</button>
     </div>
@@ -90,12 +132,16 @@
                     <input type="number" id="temperature" class="form-control" min="0" max="2" step="0.1" value="0.7">
                 </div>
                 <div class="form-group">
-                    <label for="max-tokens">最大 Tokens</label>
-                    <input type="number" id="max-tokens" class="form-control" min="1" value="1024">
+                    <label for="max-tokens">最大生成长度：</label>
+                    <input type="number" id="max-tokens" class="form-control" min="1" max="150000" value="2048" required>
                 </div>
-                <div class="form-buttons">
-                    <button type="button" id="cancel-btn" class="btn btn-secondary">取消</button>
+                <div class="form-group">
+                    <label for="welcome-message">欢迎消息（30字以内）：</label>
+                    <input type="text" id="welcome-message" class="form-control" maxlength="30" placeholder="简述如何使用这个智能体">
+                </div>
+                <div class="form-actions">
                     <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
                 </div>
             </form>
         </div>
@@ -132,8 +178,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.3.1/highlight.min.js"></script>
     <script src="script-new.js"></script>
 </body>
 </html>
