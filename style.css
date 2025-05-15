@@ -383,27 +383,180 @@ textarea.form-control {
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {
-        padding: 15px;
+        padding: 10px;
     }
     
-    .message {
-        max-width: 90%;
+    .nav-container {
+        flex-direction: column;
+        padding: 10px 0;
     }
     
-    #send-button {
-        padding: 12px 15px;
+    .logo {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .logo img {
+        width: 30px;
+        height: 30px;
     }
     
     .platform-banner {
-        padding: 10px 15px;
+        padding: 10px;
+        margin-bottom: 15px;
     }
     
     .platform-banner h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .platform-banner p {
         font-size: 0.8rem;
+    }
+    
+    .agent-selector {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    #chat-container {
+        height: calc(70vh - 120px);
+        margin-bottom: 10px;
+    }
+    
+    .message {
+        max-width: 95%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    #input-container {
+        flex-wrap: wrap;
+    }
+    
+    #clear-button {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    #user-input {
+        flex: 1 0 70%;
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    #send-button {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    /* 管理员面板移动适配 */
+    #admin-panel {
+        padding: 10px;
+    }
+    
+    .admin-section {
+        padding: 10px;
+    }
+    
+    .admin-section h2 {
+        font-size: 1.1rem;
+    }
+    
+    .agent-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .agent-actions {
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .agent-actions button {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+    
+    .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .form-control {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    textarea.form-control {
+        height: 100px;
+    }
+    
+    /* 设置面板移动适配 */
+    #settings-panel {
+        width: 90%;
+        max-width: 320px;
+        padding: 15px;
+    }
+}
+
+/* 小型移动设备（手机） */
+@media (max-width: 480px) {
+    .platform-banner {
+        padding: 8px;
+    }
+    
+    .platform-banner h1 {
+        font-size: 1rem;
+    }
+    
+    .platform-banner p {
+        font-size: 0.75rem;
+    }
+    
+    #chat-container {
+        height: calc(60vh - 100px);
+    }
+    
+    #input-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-gap: 5px;
+    }
+    
+    #clear-button {
+        grid-column: 1;
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    #user-input {
+        grid-column: 1 / span 3;
+        grid-row: 2;
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    #send-button {
+        grid-column: 3;
+        padding: 6px 10px;
+    }
+    
+    .mobile-controls {
+        margin: 5px 0;
+        padding: 8px;
+    }
+    
+    .message-controls {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .copy-btn {
+        margin-bottom: 5px;
+    }
+    
+    .word-btn {
+        margin-left: 0;
     }
 }
 
@@ -648,4 +801,54 @@ input:checked + .toggle-slider:before {
 
 .word-btn:active {
     background-color: #3e8e41; /* 更深的绿色 */
+}
+
+/* 新增的移动控件样式 */
+.mobile-controls {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.mobile-controls .mode-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.mobile-controls .mode-switcher label {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #444;
+}
+
+/* 移动错误通知样式 */
+.mobile-error-notification {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 90%;
+    text-align: center;
+    font-size: 14px;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    10% { opacity: 1; transform: translate(-50%, 0); }
+    90% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
 }

@@ -1641,17 +1641,31 @@ async function callAPI(userMessage) {
     };
     
     try {
+        // 创建请求的AbortController，设置30秒超时
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
         const response = await fetch(currentAgent.apiUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${currentAgent.apiKey}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(requestData),
+            signal: controller.signal
         });
         
+        // 清除超时
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
-            throw new Error(`API请求失败: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw {
+                response: {
+                    status: response.status,
+                    message: errorData.error?.message || `HTTP错误: ${response.status}`
+                }
+            };
         }
         
         const reader = response.body.getReader();
@@ -1708,6 +1722,7 @@ async function callAPI(userMessage) {
                         }
                     } catch (error) {
                         // JSON解析错误，忽略
+                        console.log('JSON解析错误，忽略:', error);
                     }
                 }
             }
@@ -1760,10 +1775,18 @@ async function callAPI(userMessage) {
             
             // 确保滚动到底部以显示按钮
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        } else {
+            // 如果响应为空，移除预先创建的空AI消息
+            chatContainer.removeChild(aiMessageElement);
+            handleAPIError({ message: "AI返回了空响应，请重试" });
         }
         
     } catch (error) {
-        displayMessage('提示', `API调用失败: ${error.message}`, 'system-message');
+        // 移除预先创建的空AI消息
+        chatContainer.removeChild(aiMessageElement);
+        
+        // 使用改进的错误处理
+        handleAPIError(error);
     }
     
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -1909,21 +1932,146 @@ window.addEventListener('load', function() {
 
 // 注册所有事件监听器
 function registerEventListeners() {
-sendButton.addEventListener('click', sendMessage);
-    clearButton.addEventListener('click', clearChatHistory);
-userInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-        sendMessage();
+    // 发送按钮点击事件
+    sendButton.addEventListener('click', sendMessage);
+
+    // 输入框按Enter键发送消息
+    userInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // 智能体选择
+    agentSelector.addEventListener('change', selectAgent);
+
+    // 管理员模式切换
+    adminModeCheckbox.addEventListener('change', toggleAdminMode);
+
+    // 添加智能体按钮
+    document.getElementById('add-agent-btn').addEventListener('click', addAgent);
+
+    // 取消表单按钮
+    document.getElementById('cancel-btn').addEventListener('click', cancelForm);
+
+    // 保存智能体表单
+    document.getElementById('agent-form').addEventListener('submit', saveAgent);
+
+    // 清除聊天记录按钮
+    document.getElementById('clear-button').addEventListener('click', clearChatHistory);
+
+    // 设置按钮
+    document.getElementById('settings-button').addEventListener('click', toggleSettingsPanel);
+
+    // 关闭设置面板按钮
+    document.getElementById('close-settings').addEventListener('click', closeSettingsPanel);
+
+    // 设置面板的背景遮罩
+    document.getElementById('settings-overlay').addEventListener('click', closeSettingsPanel);
+
+    // 设置选项保存
+    document.getElementById('markdown-enabled').addEventListener('change', saveSettings);
+    document.getElementById('code-highlight-enabled').addEventListener('change', saveSettings);
+
+    // 检测是否为移动设备并添加额外的事件处理
+    if (isMobileDevice()) {
+        // 在窗口大小变化时调整布局
+        window.addEventListener('resize', handleLayoutForMobile);
+        
+        // 初始化时处理移动布局
+        handleLayoutForMobile();
     }
-});
-agentSelector.addEventListener('change', selectAgent);
-adminModeCheckbox.addEventListener('change', toggleAdminMode);
-addAgentBtn.addEventListener('click', addAgent);
-cancelBtn.addEventListener('click', cancelForm);
-agentForm.addEventListener('submit', saveAgent);
-settingsButton.addEventListener('click', toggleSettingsPanel);
-closeSettings.addEventListener('click', closeSettingsPanel);
-settingsOverlay.addEventListener('click', closeSettingsPanel);
-markdownEnabled.addEventListener('change', saveSettings);
-codeHighlightEnabled.addEventListener('change', saveSettings);
-} 
+}
+
+// 检测是否为移动设备
+function isMobileDevice() {
+    return (window.innerWidth <= 768) || 
+           (navigator.userAgent.match(/Android/i) ||
+            navigator.userAgent.match(/webOS/i) ||
+            navigator.userAgent.match(/iPhone/i) ||
+            navigator.userAgent.match(/iPad/i) ||
+            navigator.userAgent.match(/iPod/i) ||
+            navigator.userAgent.match(/BlackBerry/i) ||
+            navigator.userAgent.match(/Windows Phone/i));
+}
+
+// 处理移动设备上的布局调整
+function handleLayoutForMobile() {
+    // 处理聊天容器高度
+    const chatContainer = document.getElementById('chat-container');
+    if (window.innerWidth <= 480) {
+        chatContainer.style.height = 'calc(60vh - 100px)';
+    } else if (window.innerWidth <= 768) {
+        chatContainer.style.height = 'calc(70vh - 120px)';
+    } else {
+        chatContainer.style.height = '400px'; // 默认高度
+    }
+    
+    // 确保聊天框滚动到底部
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// 改进错误处理
+function handleAPIError(error) {
+    console.error('API调用出错:', error);
+    
+    let errorMessage = '与AI服务连接出错';
+    
+    // 根据错误类型提供更具体的错误消息
+    if (error.name === 'AbortError') {
+        errorMessage = '请求超时，请检查您的网络连接并重试';
+    } else if (error.response) {
+        // 服务器返回了错误状态码
+        if (error.response.status === 401) {
+            errorMessage = 'API密钥无效或已过期，请检查您的API密钥设置';
+        } else if (error.response.status === 403) {
+            errorMessage = '无权访问API，请确认API密钥权限';
+        } else if (error.response.status === 429) {
+            errorMessage = 'API请求频率超限，请稍后再试';
+        } else {
+            errorMessage = `服务器返回错误: ${error.response.status}`;
+        }
+    } else if (error.request) {
+        // 请求已发送，但没有收到响应
+        errorMessage = '未收到API响应，请检查网络连接或API地址';
+    } else if (error.message) {
+        errorMessage = `调用AI服务出错: ${error.message}`;
+    }
+    
+    displayMessage('错误', errorMessage, 'system-message');
+    
+    // 如果在移动设备上，提供更友好的错误反馈
+    if (isMobileDevice()) {
+        // 震动反馈（如果支持）
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+        
+        // 显示在聊天框上方的错误提示
+        const errorElement = document.createElement('div');
+        errorElement.classList.add('mobile-error-notification');
+        errorElement.textContent = errorMessage;
+        document.body.appendChild(errorElement);
+        
+        // 3秒后移除错误提示
+        setTimeout(() => {
+            document.body.removeChild(errorElement);
+        }, 3000);
+    }
+}
+
+// 在适当的位置替换原来的错误处理
+// 例如在callAPI函数中:
+// 原来的代码：
+// catch (error) {
+//     console.error('API调用出错:', error);
+//     displayMessage('错误', `与AI服务连接出错: ${error.message}`, 'system-message');
+// }
+// 
+// 替换为：
+// catch (error) {
+//     handleAPIError(error);
+// }
+
+// ... existing code ... 
