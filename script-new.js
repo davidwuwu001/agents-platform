@@ -1106,8 +1106,8 @@ function renderChatHistory() {
     }
 }
 
-// Markdown转换为Word文档并下载
-async function markdownToWord(markdown, filename = 'AI回复文档') {
+// 改进的Word导出功能
+async function markdownToWord(markdown, defaultFilename = 'AI回复文档') {
     try {
         // 如果没有内容，提示用户
         if (!markdown || markdown.trim() === '') {
@@ -1115,12 +1115,37 @@ async function markdownToWord(markdown, filename = 'AI回复文档') {
             return;
         }
 
+        // 打开导出选项弹窗
+        const options = await showExportOptionsDialog(defaultFilename);
+        
+        // 如果用户取消了导出，则返回
+        if (!options) return;
+        
+        // 显示导出进度提示
+        const progressMessage = document.createElement('div');
+        progressMessage.className = 'message system-message';
+        progressMessage.innerHTML = '<span class="message-sender">系统提示: </span>正在准备Word文档，请稍候...';
+        chatContainer.appendChild(progressMessage);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
         console.log('开始转换Markdown为Word...');
         console.log('原始Markdown内容长度:', markdown.length);
-        console.log('Markdown内容前100个字符:', markdown.substring(0, 100).replace(/\n/g, '\\n'));
+        
+        // 添加标题（如果用户选择了）
+        let finalMarkdown = markdown;
+        if (options.includeTitle && options.title) {
+            finalMarkdown = `# ${options.title}\n\n${markdown}`;
+        }
+        
+        // 添加时间戳（如果用户选择了）
+        if (options.includeTimestamp) {
+            const now = new Date();
+            const timestamp = `*导出时间: ${now.toLocaleString()}*\n\n`;
+            finalMarkdown = timestamp + finalMarkdown;
+        }
         
         // 解析Markdown
-        const paragraphs = parseMarkdownForWord(markdown);
+        const paragraphs = parseMarkdownForWord(finalMarkdown);
         
         console.log('生成的段落数量:', paragraphs.length);
         
@@ -1207,7 +1232,7 @@ async function markdownToWord(markdown, filename = 'AI回复文档') {
         // 创建新的文档对象，直接在创建文档时添加sections
         const doc = new docx.Document({
             creator: "智能体聚合平台",
-            title: filename,
+            title: options.filename,
             description: "由智能体生成的文档",
             sections: [{
                 properties: {},
@@ -1216,18 +1241,114 @@ async function markdownToWord(markdown, filename = 'AI回复文档') {
             styles: styles,
         });
 
+        // 更新进度提示
+        progressMessage.innerHTML = '<span class="message-sender">系统提示: </span>正在生成Word文档，即将完成...';
+        
         // 生成blob
         const blob = await docx.Packer.toBlob(doc);
         
         // 使用FileSaver保存文件
-        saveAs(blob, `${filename}.docx`);
+        saveAs(blob, `${options.filename}.docx`);
+        
+        // 更新为成功消息
+        progressMessage.innerHTML = `<span class="message-sender">系统提示: </span>Word文档 <strong>${options.filename}.docx</strong> 已生成并下载成功！`;
         
         console.log('Word文档已生成并下载');
-        displayMessage('提示', 'Word文档已生成并下载', 'system-message');
     } catch (error) {
         console.error('生成Word文档时出错:', error);
         displayMessage('提示', `生成Word文档失败: ${error.message}`, 'system-message');
     }
+}
+
+// 显示Word导出选项对话框
+function showExportOptionsDialog(defaultFilename) {
+    return new Promise((resolve) => {
+        // 创建对话框元素
+        const dialogOverlay = document.createElement('div');
+        dialogOverlay.className = 'dialog-overlay';
+        
+        const dialogBox = document.createElement('div');
+        dialogBox.className = 'dialog-box';
+        
+        // 设置对话框内容
+        dialogBox.innerHTML = `
+            <div class="dialog-header">
+                <h3>导出Word文档</h3>
+                <button class="dialog-close-btn">&times;</button>
+            </div>
+            <div class="dialog-content">
+                <div class="dialog-form-group">
+                    <label for="export-filename">文件名：</label>
+                    <input type="text" id="export-filename" value="${defaultFilename}" class="dialog-input">
+                </div>
+                <div class="dialog-form-group">
+                    <label>
+                        <input type="checkbox" id="export-include-title" checked> 
+                        添加标题
+                    </label>
+                </div>
+                <div class="dialog-form-group">
+                    <label for="export-title">文档标题：</label>
+                    <input type="text" id="export-title" value="AI助手回复" class="dialog-input">
+                </div>
+                <div class="dialog-form-group">
+                    <label>
+                        <input type="checkbox" id="export-include-timestamp" checked> 
+                        添加导出时间戳
+                    </label>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button id="dialog-cancel-btn" class="dialog-btn dialog-btn-secondary">取消</button>
+                <button id="dialog-export-btn" class="dialog-btn dialog-btn-primary">导出</button>
+            </div>
+        `;
+        
+        // 添加对话框到页面
+        dialogOverlay.appendChild(dialogBox);
+        document.body.appendChild(dialogOverlay);
+        
+        // 获取表单元素
+        const filenameInput = document.getElementById('export-filename');
+        const includeTitleCheckbox = document.getElementById('export-include-title');
+        const titleInput = document.getElementById('export-title');
+        const includeTimestampCheckbox = document.getElementById('export-include-timestamp');
+        
+        // 添加事件监听器
+        document.querySelector('.dialog-close-btn').addEventListener('click', () => {
+            document.body.removeChild(dialogOverlay);
+            resolve(null);
+        });
+        
+        document.getElementById('dialog-cancel-btn').addEventListener('click', () => {
+            document.body.removeChild(dialogOverlay);
+            resolve(null);
+        });
+        
+        document.getElementById('dialog-export-btn').addEventListener('click', () => {
+            const options = {
+                filename: filenameInput.value || defaultFilename,
+                includeTitle: includeTitleCheckbox.checked,
+                title: titleInput.value || 'AI助手回复',
+                includeTimestamp: includeTimestampCheckbox.checked
+            };
+            
+            document.body.removeChild(dialogOverlay);
+            resolve(options);
+        });
+        
+        // 点击对话框外部关闭
+        dialogOverlay.addEventListener('click', (e) => {
+            if (e.target === dialogOverlay) {
+                document.body.removeChild(dialogOverlay);
+                resolve(null);
+            }
+        });
+        
+        // 自动聚焦到文件名输入框
+        filenameInput.focus();
+        filenameInput.select();
+    });
 }
 
 // 解析Markdown为Word段落
@@ -1512,14 +1633,14 @@ function displayAIMessage(sender, message, saveToHistory = true) {
     wordBtn.textContent = '导出Word';
     wordBtn.title = '导出为Word文档';
     wordBtn.onclick = () => {
-        // 获取当前的日期时间作为文件名一部分
+        // 获取当前的日期时间作为建议文件名
         const now = new Date();
         const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
         const timeStr = `${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
-        const filename = `AI回复_${dateStr}_${timeStr}`;
+        const suggestedFilename = `AI回复_${dateStr}_${timeStr}`;
         
-        // 调用转换函数
-        markdownToWord(message, filename);
+        // 调用改进的转换函数
+        markdownToWord(message, suggestedFilename);
     };
     
     // 添加复制按钮
@@ -1739,14 +1860,14 @@ async function callAPI(userMessage) {
             wordBtn.textContent = '导出Word';
             wordBtn.title = '导出为Word文档';
             wordBtn.onclick = () => {
-                // 获取当前的日期时间作为文件名一部分
+                // 获取当前的日期时间作为建议文件名
                 const now = new Date();
                 const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
                 const timeStr = `${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
-                const filename = `AI回复_${dateStr}_${timeStr}`;
+                const suggestedFilename = `AI回复_${dateStr}_${timeStr}`;
                 
-                // 调用转换函数
-                markdownToWord(fullResponse, filename);
+                // 调用改进的转换函数
+                markdownToWord(fullResponse, suggestedFilename);
             };
             
             // 流式响应结束后添加复制按钮到内容末尾
@@ -1933,21 +2054,21 @@ window.addEventListener('load', function() {
 // 注册所有事件监听器
 function registerEventListeners() {
     // 发送按钮点击事件
-    sendButton.addEventListener('click', sendMessage);
+sendButton.addEventListener('click', sendMessage);
 
     // 输入框按Enter键发送消息
     userInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            sendMessage();
-        }
-    });
+        sendMessage();
+    }
+});
 
     // 智能体选择
-    agentSelector.addEventListener('change', selectAgent);
+agentSelector.addEventListener('change', selectAgent);
 
     // 管理员模式切换
-    adminModeCheckbox.addEventListener('change', toggleAdminMode);
+adminModeCheckbox.addEventListener('change', toggleAdminMode);
 
     // 添加智能体按钮
     document.getElementById('add-agent-btn').addEventListener('click', addAgent);
