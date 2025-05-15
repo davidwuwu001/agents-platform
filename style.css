@@ -803,29 +803,56 @@ input:checked + .toggle-slider:before {
     background-color: #3e8e41; /* 更深的绿色 */
 }
 
-/* 新增的移动控件样式 */
+/* 移动控件样式 */
 .mobile-controls {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     margin: 10px 0;
-    padding: 10px;
+    padding: 10px 15px;
     background-color: #f8f9fa;
     border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .mobile-controls .mode-switcher {
     display: flex;
     align-items: center;
-    justify-content: center;
     background-color: transparent;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 5px 0;
 }
 
 .mobile-controls .mode-switcher label {
     margin-right: 10px;
     font-size: 14px;
     color: #444;
+}
+
+/* 底部设置按钮样式 */
+.mobile-controls .settings-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #5f6368;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.mobile-controls .settings-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.mobile-controls .settings-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+}
+
+.mobile-controls .settings-text {
+    font-size: 14px;
 }
 
 /* 移动错误通知样式 */
