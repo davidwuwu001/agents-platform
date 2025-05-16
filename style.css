@@ -497,27 +497,30 @@ textarea.form-control {
     }
     
     #input-container {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        grid-gap: 5px;
+        display: flex; /* 改为flex布局 */
+        flex-wrap: wrap; /* 保持内容在需要时可以换行 */
+        gap: 5px; /* 元素之间添加间距 */
+        align-items: center; /* 垂直居中对齐 */
     }
     
     #clear-button {
-        grid-column: 1;
-        padding: 6px;
+        flex: 0 0 auto; /* 不拉伸，不收缩，保持原始大小 */
+        padding: 8px;
         font-size: 12px;
+        border-radius: 5px; /* 修复圆角 */
     }
     
     #user-input {
-        grid-column: 1 / span 3;
-        grid-row: 2;
-        width: 100%;
-        margin: 5px 0;
+        flex: 1; /* 让输入框占据剩余空间 */
+        margin: 0; /* 移除上下边距 */
+        border-radius: 5px; /* 添加圆角 */
+        padding: 8px 10px;
     }
     
     #send-button {
-        grid-column: 3;
-        padding: 6px 10px;
+        flex: 0 0 auto; /* 不拉伸，不收缩，保持原始大小 */
+        padding: 8px 10px;
+        border-radius: 5px; /* 修复圆角 */
     }
     
     .mobile-controls {
