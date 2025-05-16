@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#ffffff">
     <meta name="description" content="智能体聚合聊天平台">
-    <title>智能体聚合平台</title>
+    <title>汤仔高效智能助手</title>
     <!-- 添加错误捕获代码 -->
     <script>
         window.onerror = function(message, source, lineno, colno, error) {
@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style-fix.css">
+    <link rel="stylesheet" href="tangzai-style.css">
     <!-- 添加 markdown 解析库 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <!-- 添加代码高亮库 -->
@@ -63,15 +64,21 @@
 <body>
     <div class="app-container">
         <header>
-            <div class="header-left">
-                <div id="menu-icon" class="icon">&#9776;</div>
-                <h1>智能体聚合平台</h1>
+            <div class="tangzai-brand">
+                <img src="tangzai-logo.svg" alt="汤仔" class="tangzai-logo">
+                <h1 class="tangzai-title">汤仔高效智能助手</h1>
             </div>
             <div class="header-right">
                 <div id="settings-icon" class="icon" data-tooltip="设置">&#9881;</div>
                 <div id="clear-icon" class="icon" onclick="clearChatHistory()" data-tooltip="清除聊天记录">&#128465;</div>
             </div>
         </header>
+        
+        <!-- 添加横幅区域 -->
+        <div id="tangzai-banner" class="tangzai-banner">
+            <h2>AI+工具，效率倍增</h2>
+            <p>连接顶尖大模型，智能助手让工作更高效</p>
+        </div>
         
         <div class="main-container">
             <div id="sidebar" class="sidebar">
@@ -98,58 +105,60 @@
         
         <!-- 智能体添加/编辑表单 -->
         <div id="agent-form-container" style="display: none;">
-            <div class="form-header">
-                <h2 id="form-title">添加智能体</h2>
-                <span onclick="cancelForm()" class="close-btn">&times;</span>
+            <div id="agent-form">
+                <div class="form-header">
+                    <h2 id="form-title">添加智能体</h2>
+                    <span onclick="cancelForm()" class="close-btn">&times;</span>
+                </div>
+                <form onsubmit="saveAgent(event)">
+                    <input type="hidden" id="agent-id">
+                    
+                    <div class="form-group">
+                        <label for="agent-name">智能体名称</label>
+                        <input type="text" id="agent-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="api-url">API地址</label>
+                        <input type="text" id="api-url" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="api-key">API密钥</label>
+                        <input type="text" id="api-key" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="model">模型名称</label>
+                        <input type="text" id="model" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="system-prompt">系统提示词</label>
+                        <textarea id="system-prompt"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temperature">Temperature</label>
+                        <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="max-tokens">最大Token数</label>
+                        <input type="number" id="max-tokens" min="100" max="10000" value="2048">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="welcome-message">欢迎消息</label>
+                        <textarea id="welcome-message"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" onclick="cancelForm()" class="cancel-btn">取消</button>
+                        <button type="submit" class="save-btn">保存</button>
+                    </div>
+                </form>
             </div>
-            <form id="agent-form" onsubmit="saveAgent(event)">
-                <input type="hidden" id="agent-id">
-                
-                <div class="form-group">
-                    <label for="agent-name">智能体名称</label>
-                    <input type="text" id="agent-name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="api-url">API地址</label>
-                    <input type="text" id="api-url" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="api-key">API密钥</label>
-                    <input type="text" id="api-key" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="model">模型名称</label>
-                    <input type="text" id="model" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="system-prompt">系统提示词</label>
-                    <textarea id="system-prompt"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="temperature">Temperature</label>
-                    <input type="number" id="temperature" min="0" max="2" step="0.1" value="0.7">
-                </div>
-                
-                <div class="form-group">
-                    <label for="max-tokens">最大Token数</label>
-                    <input type="number" id="max-tokens" min="100" max="10000" value="2048">
-                </div>
-                
-                <div class="form-group">
-                    <label for="welcome-message">欢迎消息</label>
-                    <textarea id="welcome-message"></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" onclick="cancelForm()" class="cancel-btn">取消</button>
-                    <button type="submit" class="save-btn">保存</button>
-                </div>
-            </form>
         </div>
         
         <!-- 设置面板 -->
@@ -224,8 +233,39 @@
     <!-- 主应用模块放在最后加载 -->
     <script src="app.js"></script>
     
-    <!-- 辅助功能脚本 -->
+    <!-- 横幅隐藏控制脚本 -->
     <script>
+        // 横幅控制
+        function toggleBanner(show) {
+            const banner = document.getElementById('tangzai-banner');
+            if (banner) {
+                if (show) {
+                    banner.classList.remove('hidden');
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+        }
+        
+        // 监听智能体选择变化
+        document.getElementById('agent-selector').addEventListener('change', function() {
+            if (this.value) {
+                // 当选择了智能体时，隐藏横幅
+                toggleBanner(false);
+            }
+        });
+        
+        // 初始状态下显示横幅
+        document.addEventListener('DOMContentLoaded', function() {
+            // 如果URL中有agent参数，说明已经选择了智能体，则隐藏横幅
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('agent')) {
+                toggleBanner(false);
+            } else {
+                toggleBanner(true);
+            }
+        });
+        
         // 清除本地存储的所有数据
         function clearLocalStorage() {
             if (confirm('确定要删除所有存储的智能体和聊天记录吗？此操作不可恢复！')) {

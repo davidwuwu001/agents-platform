@@ -660,6 +660,11 @@ function selectAgent() {
     currentAgent = agents.find(agent => agent.id === agentId);
     
     if (currentAgent) {
+        // 隐藏横幅广告
+        if (typeof toggleBanner === 'function') {
+            toggleBanner(false);
+        }
+        
         // 清空聊天界面，但不清除历史记录
         chatContainer.innerHTML = '';
         

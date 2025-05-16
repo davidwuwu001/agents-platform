@@ -256,6 +256,11 @@ function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
     
+    // 隐藏横幅广告
+    if (typeof toggleBanner === 'function') {
+        toggleBanner(false);
+    }
+    
     if (!window.currentAgent) {
         displayMessage('提示', '请先选择一个智能体', 'system-message');
         return;
