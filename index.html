@@ -38,6 +38,10 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <!-- 添加apple-touch-icon，避免404错误 -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <!-- 添加样式，优先加载重置样式 -->
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-fix.css">
     <!-- 添加 markdown 解析库 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js"></script>
     <!-- 添加代码高亮库 -->
@@ -47,13 +51,13 @@
     <script src="docx.js"></script>
     <!-- 添加FileSaver.js用于保存文件 - 使用本地文件，添加noSourceMap参数避免404错误 -->
     <script src="FileSaver.min.js" data-no-sourcemap></script>
-    <link rel="stylesheet" href="style.css">
     <!-- 添加PWA支持 -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <!-- 预加载模块脚本 -->
     <link rel="preload" href="storage.js" as="script">
-    <link rel="preload" href="agents.js" as="script">
+    <link rel="preload" href="settings.js" as="script">
+    <link rel="preload" href="ui.js" as="script">
     <link rel="preload" href="chat.js" as="script">
 </head>
 <body>

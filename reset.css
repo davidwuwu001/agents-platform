@@ -1,0 +1,134 @@
+/* 重置所有元素的默认样式 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 设置根元素基础属性 */
+:root {
+  --font-family-primary: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  --color-primary: #4285f4;
+  --color-primary-dark: #3367d6;
+  --color-secondary: #5f6368;
+  --color-success: #34a853;
+  --color-warning: #fbbc04;
+  --color-danger: #ea4335;
+  --color-text-primary: #333;
+  --color-text-secondary: #666;
+  --color-text-light: white;
+  --background-body: #f9f9f9;
+  --background-container: white;
+  --background-user-message: #e3f2fd;
+  --background-ai-message: #f1f3f4;
+  --background-system-message: #fdecea;
+  --border-color-light: #eaeaea;
+  --border-color-medium: #ccc;
+  --border-color-dark: #9aa0a6;
+}
+
+/* 重置HTML和Body */
+html {
+  height: 100%;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-primary);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--background-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 重置标题 */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+/* 重置段落 */
+p {
+  margin: 0 0 1em 0;
+}
+
+/* 重置表单元素 */
+input, button, textarea, select {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+textarea {
+  overflow: auto;
+  resize: vertical;
+}
+
+/* 重置图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  border-style: none;
+}
+
+/* 重置链接样式 */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 重置列表 */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 移除默认表格和单元格间距 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+/* 适用于移动设备的样式 */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+} 
