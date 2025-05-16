@@ -12,6 +12,7 @@ const agentFormContainer = document.getElementById('agent-form-container');
 const agentForm = document.getElementById('agent-form');
 const cancelBtn = document.getElementById('cancel-btn');
 const formTitle = document.getElementById('form-title');
+const tangzaiButton = document.getElementById('tangzai-button');
 
 // 安全存储工具库 - 处理各种存储相关问题
 const StorageUtil = {
@@ -2102,6 +2103,13 @@ adminModeCheckbox.addEventListener('change', toggleAdminMode);
         
         // 初始化时处理移动布局
         handleLayoutForMobile();
+    }
+
+    // 汤仔助手按钮点击事件
+    if (tangzaiButton) {
+        tangzaiButton.addEventListener('click', function() {
+            window.location.href = 'tangzai.html';
+        });
     }
 }
 

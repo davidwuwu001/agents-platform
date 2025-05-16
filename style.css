@@ -829,7 +829,8 @@ input:checked + .toggle-slider:before {
 }
 
 /* 底部设置按钮样式 */
-.mobile-controls .settings-btn {
+.mobile-controls .settings-btn,
+.mobile-controls .tangzai-btn {
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -841,17 +842,20 @@ input:checked + .toggle-slider:before {
     transition: background-color 0.2s;
 }
 
-.mobile-controls .settings-btn:hover {
+.mobile-controls .settings-btn:hover,
+.mobile-controls .tangzai-btn:hover {
     background-color: rgba(0,0,0,0.05);
 }
 
-.mobile-controls .settings-icon {
+.mobile-controls .settings-icon,
+.mobile-controls .tangzai-icon {
     width: 18px;
     height: 18px;
     margin-right: 5px;
 }
 
-.mobile-controls .settings-text {
+.mobile-controls .settings-text,
+.mobile-controls .tangzai-text {
     font-size: 14px;
 }
 
