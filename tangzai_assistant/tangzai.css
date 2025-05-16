@@ -1,0 +1,197 @@
+/* 汤仔助手特定样式 */
+:root {
+    --tangzai-primary: #FF6B6B;
+    --tangzai-secondary: #FF8E8E;
+    --tangzai-dark: #E94A4A;
+    --tangzai-light: #FFE2E2;
+    --tangzai-bg: #FFF5F5;
+}
+
+/* 覆盖主横幅样式 */
+.tangzai-banner {
+    background: linear-gradient(45deg, var(--tangzai-dark), var(--tangzai-primary));
+}
+
+/* 聊天容器样式 */
+.tangzai-chat-container {
+    background-color: var(--tangzai-bg);
+    border: 1px solid var(--tangzai-light);
+}
+
+/* 用户消息样式 */
+.tangzai-chat-container .user-message {
+    background-color: var(--tangzai-light);
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* AI消息样式 */
+.tangzai-chat-container .ai-message {
+    background-color: white;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 输入区域样式 */
+.tangzai-input-container {
+    border: 1px solid var(--tangzai-light);
+    border-radius: 8px;
+    padding: 5px;
+    background-color: white;
+}
+
+.tangzai-input-container input {
+    border: none;
+    outline: none;
+}
+
+.tangzai-input-container button {
+    background-color: var(--tangzai-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.tangzai-input-container button:hover {
+    background-color: var(--tangzai-dark);
+}
+
+/* 控制区域样式 */
+.tangzai-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.tangzai-controls button {
+    background-color: transparent;
+    border: 1px solid var(--tangzai-light);
+    color: var(--tangzai-primary);
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tangzai-controls button:hover {
+    background-color: var(--tangzai-light);
+    color: var(--tangzai-dark);
+}
+
+/* 设置面板样式 */
+.tangzai-settings-panel {
+    border-top: 3px solid var(--tangzai-primary);
+    position: fixed;
+    z-index: 1001;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    display: none;
+    overflow-y: auto;
+}
+
+.settings-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.settings-footer {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.settings-save-btn {
+    padding: 8px 16px;
+    background-color: #4a6ee0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.settings-save-btn:hover {
+    background-color: #3a5ec0;
+}
+
+/* 测试连接按钮 */
+.settings-test-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    transition: background-color 0.2s;
+}
+
+.settings-test-btn:hover {
+    background-color: #218838;
+}
+
+/* 流式回复动画效果 */
+@keyframes blink {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+.streaming-cursor {
+    display: inline-block;
+    width: 6px;
+    height: 16px;
+    background-color: var(--tangzai-primary);
+    margin-left: 2px;
+    animation: blink 1s infinite;
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+    .tangzai-controls {
+        flex-wrap: wrap;
+    }
+    
+    .tangzai-controls button {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tangzai-banner h1 {
+        font-size: 1.2rem;
+    }
+    
+    .tangzai-banner p {
+        font-size: 0.8rem;
+    }
+}
+
+/* 添加API通知样式 */
+.api-notice {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 0.85rem;
+}

@@ -434,6 +434,12 @@ async function initializeAgents() {
     try {
         console.log("开始初始化智能体...");
         
+        // 确保平台介绍横幅在初始状态下显示
+        const platformBanner = document.querySelector('.platform-banner');
+        if (platformBanner) {
+            platformBanner.style.display = 'block';
+        }
+        
         // 先从本地存储加载用户自定义的智能体
         let localAgents = [];
         try {
@@ -1057,6 +1063,12 @@ function selectAgent() {
     currentAgent = agents.find(agent => agent.id === agentId);
     
     if (currentAgent) {
+        // 隐藏平台介绍横幅
+        const platformBanner = document.querySelector('.platform-banner');
+        if (platformBanner) {
+            platformBanner.style.display = 'none';
+        }
+        
         // 清空聊天界面，但不清除历史记录
         chatContainer.innerHTML = '';
         
@@ -2013,7 +2025,7 @@ function clearChatHistory() {
     }
     
     // 弹出确认对话框
-    if (confirm('确定要清除当前智能体的聊天记录吗？')) {
+    if (confirm(`确定要清除当前智能体的聊天记录吗？`)) {
         // 清空界面
         chatContainer.innerHTML = '';
         
@@ -2027,6 +2039,12 @@ function clearChatHistory() {
         // 重新显示欢迎消息
         if (currentAgent.welcomeMessage) {
             displayMessage(currentAgent.name, currentAgent.welcomeMessage, 'ai-message');
+        }
+        
+        // 确保平台介绍横幅保持隐藏状态
+        const platformBanner = document.querySelector('.platform-banner');
+        if (platformBanner) {
+            platformBanner.style.display = 'none';
         }
     }
 }
