@@ -1086,8 +1086,8 @@ function selectAgent() {
         // 恢复之前的聊天记录
         renderChatHistory();
         
-        // 选择智能体后重新调整布局高度
-        handleLayoutForMobile();
+        // 选择智能体后立即重新计算布局，给操作系统和浏览器200ms的时间来更新DOM
+        setTimeout(handleLayoutForMobile, 200);
     }
 }
 
@@ -2050,8 +2050,8 @@ function clearChatHistory() {
             platformBanner.style.display = 'none';
         }
         
-        // 清除聊天记录后重新调整布局高度
-        handleLayoutForMobile();
+        // 清除聊天记录后重新计算布局高度
+        setTimeout(handleLayoutForMobile, 200);
     }
 }
 
@@ -2074,26 +2074,71 @@ window.addEventListener('load', function() {
     
     // 注册事件监听器
     registerEventListeners();
+    
+    // 设置MutationObserver监听DOM变化
+    setupMutationObserver();
 });
+
+// 设置MutationObserver来监听DOM变化并自动调整布局
+function setupMutationObserver() {
+    // 创建观察器
+    const layoutObserver = new MutationObserver(function(mutations) {
+        // DOM变化可能影响布局，延迟调用布局调整
+        clearTimeout(window.domChangeTimer);
+        window.domChangeTimer = setTimeout(handleLayoutForMobile, 300);
+    });
+    
+    // 选择要观察的目标元素
+    const chatContainer = document.getElementById('chat-container');
+    const platformBanner = document.querySelector('.platform-banner');
+    
+    // 配置观察选项
+    const config = { 
+        childList: true,     // 观察目标子节点的变化
+        subtree: true,       // 观察所有后代节点
+        attributes: true,    // 观察属性变化
+        attributeFilter: ['style', 'class'] // 只关注样式和类变化
+    };
+    
+    // 开始观察
+    if (chatContainer) {
+        layoutObserver.observe(chatContainer, config);
+        console.log("已设置聊天容器的MutationObserver");
+    }
+    
+    if (platformBanner) {
+        layoutObserver.observe(platformBanner, config);
+        console.log("已设置平台横幅的MutationObserver");
+    }
+    
+    // 观察整个body的显示/隐藏变化
+    layoutObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['style', 'class'],
+        childList: false
+    });
+    
+    console.log("DOM变化监听器已设置完成");
+}
 
 // 注册所有事件监听器
 function registerEventListeners() {
     // 发送按钮点击事件
-sendButton.addEventListener('click', sendMessage);
+    sendButton.addEventListener('click', sendMessage);
 
     // 输入框按Enter键发送消息
     userInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-        sendMessage();
-    }
-});
+            sendMessage();
+        }
+    });
 
     // 智能体选择
-agentSelector.addEventListener('change', selectAgent);
+    agentSelector.addEventListener('change', selectAgent);
 
     // 管理员模式切换
-adminModeCheckbox.addEventListener('change', toggleAdminMode);
+    adminModeCheckbox.addEventListener('change', toggleAdminMode);
 
     // 添加智能体按钮
     document.getElementById('add-agent-btn').addEventListener('click', addAgent);
@@ -2120,14 +2165,21 @@ adminModeCheckbox.addEventListener('change', toggleAdminMode);
     document.getElementById('markdown-enabled').addEventListener('change', saveSettings);
     document.getElementById('code-highlight-enabled').addEventListener('change', saveSettings);
 
-    // 检测是否为移动设备并添加额外的事件处理
-    if (isMobileDevice()) {
-        // 在窗口大小变化时调整布局
-        window.addEventListener('resize', handleLayoutForMobile);
-        
-        // 初始化时处理移动布局
+    // 窗口大小变化时重新计算布局（不限于移动设备）
+    window.addEventListener('resize', function() {
+        // 使用节流函数避免频繁触发
+        clearTimeout(window.resizeTimer);
+        window.resizeTimer = setTimeout(handleLayoutForMobile, 250);
+    });
+    
+    // 页面完全加载后调整布局
+    window.addEventListener('load', function() {
+        // 初始布局调整
         handleLayoutForMobile();
-    }
+        
+        // 浏览器可能会在加载完成后进行额外布局调整，再次延迟调用
+        setTimeout(handleLayoutForMobile, 500);
+    });
 
     // 汤仔助手按钮点击事件
     if (tangzaiButton) {
@@ -2135,6 +2187,9 @@ adminModeCheckbox.addEventListener('change', toggleAdminMode);
             window.location.href = 'tangzai.html';
         });
     }
+    
+    // 初始布局调整，确保首次访问时就有合适的高度
+    handleLayoutForMobile();
 }
 
 // 检测是否为移动设备
@@ -2151,36 +2206,48 @@ function isMobileDevice() {
 
 // 处理移动设备上的布局调整
 function handleLayoutForMobile() {
-    // 处理聊天容器高度
+    // 获取关键元素
     const chatContainer = document.getElementById('chat-container');
     const platformBanner = document.querySelector('.platform-banner');
-    const hasSelectedAgent = currentAgent != null; // 检查是否已选择智能体
+    const helpLink = document.querySelector('.help-link');
+    const inputContainer = document.getElementById('input-container');
+    const mobileControls = document.querySelector('.mobile-controls');
+    const hasSelectedAgent = currentAgent != null;
     const bannerHidden = platformBanner && platformBanner.style.display === 'none';
     
-    // 根据设备宽度和是否选择了智能体来设置聊天容器高度
+    // 计算可用高度 (视口高度减去顶部和底部元素的高度)
+    const viewportHeight = window.innerHeight;
+    const bannerHeight = platformBanner ? platformBanner.offsetHeight : 0;
+    const helpLinkHeight = helpLink ? helpLink.offsetHeight : 0;
+    const inputHeight = inputContainer ? inputContainer.offsetHeight : 0;
+    const controlsHeight = mobileControls ? mobileControls.offsetHeight : 0;
+    
+    // 计算额外元素占用的总高度（加上一些间距）
+    const reservedHeight = bannerHeight + helpLinkHeight + inputHeight + controlsHeight + 30;
+    
+    // 计算聊天容器的理想高度（视口高度减去保留的高度）
+    let idealHeight = viewportHeight - reservedHeight;
+    let heightValue;
+    
+    // 根据设备宽度进行不同的处理
     if (window.innerWidth <= 480) { // 手机设备
-        if (hasSelectedAgent && bannerHidden) {
-            // 已选择智能体且欢迎横幅隐藏时，给予更大的高度
-            chatContainer.style.height = 'calc(92vh - 100px)';
-        } else {
-            chatContainer.style.height = 'calc(87vh - 100px)'; // 未选择智能体时的高度
-        }
+        // 手机上使用vh单位但限制最大高度，确保底部元素可见
+        heightValue = `min(${idealHeight}px, 70vh)`;
     } else if (window.innerWidth <= 768) { // 平板设备
-        if (hasSelectedAgent && bannerHidden) {
-            chatContainer.style.height = 'calc(90vh - 100px)';
-        } else {
-            chatContainer.style.height = 'calc(86vh - 100px)';
-        }
+        heightValue = `min(${idealHeight}px, 75vh)`;
     } else { // 桌面设备
-        if (hasSelectedAgent && bannerHidden) {
-            chatContainer.style.height = 'calc(88vh - 80px)';
-        } else {
-            chatContainer.style.height = 'calc(85vh - 80px)';
-        }
+        heightValue = `min(${idealHeight}px, 78vh)`;
     }
     
-    // 确保聊天框滚动到底部
+    // 设置聊天容器高度
+    chatContainer.style.height = heightValue;
+    
+    // 如果有滚动条，确保滚动到底部
     chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // 在控制台输出计算信息，方便调试
+    console.log(`设备宽度: ${window.innerWidth}px, 视口高度: ${viewportHeight}px`);
+    console.log(`计算的理想高度: ${idealHeight}px, 设置的高度: ${heightValue}`);
 }
 
 // 改进错误处理
