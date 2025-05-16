@@ -1085,6 +1085,9 @@ function selectAgent() {
         
         // 恢复之前的聊天记录
         renderChatHistory();
+        
+        // 选择智能体后重新调整布局高度
+        handleLayoutForMobile();
     }
 }
 
@@ -2046,6 +2049,9 @@ function clearChatHistory() {
         if (platformBanner) {
             platformBanner.style.display = 'none';
         }
+        
+        // 清除聊天记录后重新调整布局高度
+        handleLayoutForMobile();
     }
 }
 
@@ -2147,12 +2153,30 @@ function isMobileDevice() {
 function handleLayoutForMobile() {
     // 处理聊天容器高度
     const chatContainer = document.getElementById('chat-container');
-    if (window.innerWidth <= 480) {
-        chatContainer.style.height = 'calc(60vh - 100px)';
-    } else if (window.innerWidth <= 768) {
-        chatContainer.style.height = 'calc(70vh - 120px)';
-    } else {
-        chatContainer.style.height = '400px'; // 默认高度
+    const platformBanner = document.querySelector('.platform-banner');
+    const hasSelectedAgent = currentAgent != null; // 检查是否已选择智能体
+    const bannerHidden = platformBanner && platformBanner.style.display === 'none';
+    
+    // 根据设备宽度和是否选择了智能体来设置聊天容器高度
+    if (window.innerWidth <= 480) { // 手机设备
+        if (hasSelectedAgent && bannerHidden) {
+            // 已选择智能体且欢迎横幅隐藏时，给予更大的高度
+            chatContainer.style.height = 'calc(92vh - 100px)';
+        } else {
+            chatContainer.style.height = 'calc(87vh - 100px)'; // 未选择智能体时的高度
+        }
+    } else if (window.innerWidth <= 768) { // 平板设备
+        if (hasSelectedAgent && bannerHidden) {
+            chatContainer.style.height = 'calc(90vh - 100px)';
+        } else {
+            chatContainer.style.height = 'calc(86vh - 100px)';
+        }
+    } else { // 桌面设备
+        if (hasSelectedAgent && bannerHidden) {
+            chatContainer.style.height = 'calc(88vh - 80px)';
+        } else {
+            chatContainer.style.height = 'calc(85vh - 80px)';
+        }
     }
     
     // 确保聊天框滚动到底部
