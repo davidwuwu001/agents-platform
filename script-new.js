@@ -2222,21 +2222,21 @@ function handleLayoutForMobile() {
     const inputHeight = inputContainer ? inputContainer.offsetHeight : 0;
     const controlsHeight = mobileControls ? mobileControls.offsetHeight : 0;
     
-    // 计算额外元素占用的总高度（加上一些间距）
-    const reservedHeight = bannerHeight + helpLinkHeight + inputHeight + controlsHeight + 30;
+    // 计算额外元素占用的总高度（加上更多间距确保底部元素完全可见）
+    const reservedHeight = bannerHeight + helpLinkHeight + inputHeight + controlsHeight + 60;
     
     // 计算聊天容器的理想高度（视口高度减去保留的高度）
     let idealHeight = viewportHeight - reservedHeight;
     let heightValue;
     
-    // 根据设备宽度进行不同的处理
+    // 根据设备宽度进行不同的处理，显著降低vh上限
     if (window.innerWidth <= 480) { // 手机设备
         // 手机上使用vh单位但限制最大高度，确保底部元素可见
-        heightValue = `min(${idealHeight}px, 70vh)`;
+        heightValue = `min(${idealHeight}px, 58vh)`;
     } else if (window.innerWidth <= 768) { // 平板设备
-        heightValue = `min(${idealHeight}px, 75vh)`;
+        heightValue = `min(${idealHeight}px, 62vh)`;
     } else { // 桌面设备
-        heightValue = `min(${idealHeight}px, 78vh)`;
+        heightValue = `min(${idealHeight}px, 65vh)`;
     }
     
     // 设置聊天容器高度
