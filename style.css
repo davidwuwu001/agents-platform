@@ -137,11 +137,11 @@ body {
 
 /* 聊天容器 */
 #chat-container {
-    height: calc(80vh - 120px); /* 增加平板设备上的高度比例 */
+    height: calc(85vh - 80px); /* 增加聊天容器的高度占比 */
     border: 1px solid #eaeaea;
     padding: 15px;
     overflow-y: auto;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* 减少底部边距 */
     border-radius: 8px;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -150,7 +150,8 @@ body {
 /* 输入区域 */
 #input-container {
     display: flex;
-    margin-top: 10px;
+    margin-top: 5px; /* 减少顶部边距 */
+    margin-bottom: 5px; /* 添加底部边距 */
 }
 
 #clear-button {
@@ -236,7 +237,8 @@ body {
 /* 帮助链接 */
 .help-link {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px; /* 减少底部边距 */
+    margin-top: 0; /* 移除顶部边距 */
 }
 
 .help-link a {
@@ -399,8 +401,8 @@ textarea.form-control {
     }
     
     #chat-container {
-        height: calc(80vh - 120px); /* 统一修改为更高的比例 */
-        margin-bottom: 10px;
+        height: calc(86vh - 100px); /* 平板设备上增加高度 */
+        margin-bottom: 5px;
     }
     
     .message {
@@ -493,7 +495,7 @@ textarea.form-control {
     }
     
     #chat-container {
-        height: calc(75vh - 100px); /* 增加手机设备上的高度比例 */
+        height: calc(87vh - 100px); /* 手机设备上增加高度 */
     }
     
     #input-container {
@@ -524,8 +526,8 @@ textarea.form-control {
     }
     
     .mobile-controls {
-        margin: 5px 0;
-        padding: 8px;
+        margin: 0 0 5px 0;
+        padding: 5px 8px;
     }
     
     .message-controls {
@@ -790,8 +792,8 @@ input:checked + .toggle-slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
-    padding: 10px 15px;
+    margin: 0 0 5px 0; /* 减少上下边距 */
+    padding: 5px 15px; /* 减少内边距 */
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
