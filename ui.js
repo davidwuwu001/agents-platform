@@ -283,6 +283,7 @@ window.adjustChatContainerHeight = adjustChatContainerHeight;
 window.createOverlay = createOverlay;
 window.removeOverlay = removeOverlay;
 window.autoResizeTextarea = autoResizeTextarea;
+window.initTooltips = initTooltips;
 window.showLoading = showLoading;
 window.hideLoading = hideLoading;
 window.showNotification = showNotification; 
