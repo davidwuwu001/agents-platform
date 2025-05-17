@@ -12,11 +12,11 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/styles/github.min.css">
     <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
     <!-- 添加docx.js用于生成Word文档 -->
-    <script src="docx.js"></script>
+    <script src="js/docx.js"></script>
     <!-- 添加FileSaver.js用于保存文件 -->
-    <script src="FileSaver.min.js"></script>
+    <script src="js/FileSaver.min.js"></script>
     <!-- 引入我们创建的markdown-to-word.js -->
-    <script src="markdown-to-word.js"></script>
+    <script src="js/markdown-to-word.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -127,9 +127,9 @@
     
     <h2>如何在您的项目中使用</h2>
     <p>只需要在您的HTML中引入以下三个文件：</p>
-    <pre><code>&lt;script src="docx.js"&gt;&lt;/script&gt;
-&lt;script src="FileSaver.min.js"&gt;&lt;/script&gt;
-&lt;script src="markdown-to-word.js"&gt;&lt;/script&gt;</code></pre>
+    <pre><code>&lt;script src="js/docx.js"&gt;&lt;/script&gt;
+&lt;script src="js/FileSaver.min.js"&gt;&lt;/script&gt;
+&lt;script src="js/markdown-to-word.js"&gt;&lt;/script&gt;</code></pre>
     
     <p>然后使用以下JavaScript代码导出Word：</p>
     <pre><code>// 转换Markdown为Word并下载

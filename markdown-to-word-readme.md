@@ -23,11 +23,11 @@
 
 ```html
 <!-- 添加docx.js用于生成Word文档 -->
-<script src="docx.js"></script>
+<script src="js/docx.js"></script>
 <!-- 添加FileSaver.js用于保存文件 -->
-<script src="FileSaver.min.js"></script>
+<script src="js/FileSaver.min.js"></script>
 <!-- 引入我们的Markdown转Word工具 -->
-<script src="markdown-to-word.js"></script>
+<script src="js/markdown-to-word.js"></script>
 ```
 
 ### 2. 使用导出功能
