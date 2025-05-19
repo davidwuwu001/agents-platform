@@ -75,5 +75,16 @@
     "temperature": 0.7,
     "max_tokens": 20000,
     "welcomeMessage": "直接输入问题，我会回答。"
+  },
+  {
+    "id": "8",
+    "name": "8️⃣新智能体",
+    "apiKeyVariableName": "6cd1bea6-f188-462b-8803-4a2b52eee1db",
+    "apiUrl": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    "model": "doubao-1-5-pro-256k-250115",
+    "systemPrompt": "",
+    "temperature": 0.7,
+    "max_tokens": 2048,
+    "welcomeMessage": "直接输入问题，我会回答。"
   }
 ]
