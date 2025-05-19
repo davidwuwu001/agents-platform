@@ -25,22 +25,51 @@
 /
 ├── index.html          # 主平台首页
 ├── style.css           # 主样式表
-├── script-new.js       # 主平台脚本
 ├── agents.json         # 智能体配置数据
-├── docx.js             # Word文档生成库
-├── FileSaver.min.js    # 文件保存库
 ├── favicon.ico         # 网站图标
 ├── tangzai.jpg         # 汤仔助手头像
+├── js/                 # JavaScript模块文件夹
+│   ├── app.js          # 应用入口模块
+│   ├── agent-service.js # 智能体服务模块
+│   ├── api-service.js  # API调用服务模块
+│   ├── chat-service.js # 聊天服务模块
+│   ├── export-service.js # 导出服务模块 
+│   ├── message-handler.js # 消息显示模块
+│   ├── storage-service.js # 存储服务模块
+│   ├── layout-manager.js # 布局管理模块
+│   ├── docx.js         # Word文档生成库
+│   ├── FileSaver.min.js # 文件保存库
+│   └── markdown-to-word.js # Markdown转Word库
 ├── tangzai_assistant/  # 汤仔助手文件夹
 │   ├── tangzai.html    # 汤仔助手页面
 │   ├── tangzai.css     # 汤仔助手样式表
 │   └── tangzai.js      # 汤仔助手脚本
+├── backups/            # 自动备份文件夹
 ├── faq.html            # 常见问题解答页面
+├── markdown-to-word-demo.html # 转Word演示页面
+├── markdown-to-word-readme.md # 转Word使用说明
 ├── start.html          # 启动指南页面
 ├── start.bat           # Windows启动脚本
 ├── start.sh            # Linux/Mac启动脚本
 └── restart-server.sh   # 服务器重启脚本
 ```
+
+## 模块说明
+
+### 核心模块
+- **app.js**: 应用入口模块，负责初始化和协调各个服务模块
+- **agent-service.js**: 智能体服务模块，负责智能体的管理、加载和保存
+- **api-service.js**: API服务模块，负责所有API调用和响应处理
+- **chat-service.js**: 聊天服务模块，负责聊天历史管理和消息交互
+- **export-service.js**: 导出服务模块，负责Word文档导出相关功能
+- **message-handler.js**: 消息处理模块，负责所有消息的显示与处理
+- **storage-service.js**: 存储服务模块，负责本地存储与数据持久化
+- **layout-manager.js**: 布局管理模块，负责界面布局的调整与优化
+
+### 第三方库
+- **docx.js**: Word文档生成库
+- **FileSaver.min.js**: 文件保存库
+- **markdown-to-word.js**: Markdown转Word功能库
 
 ## 使用方法
 
@@ -76,6 +105,7 @@
 
 ## 技术特性
 
+- 模块化架构设计，每个模块具有单一职责
 - 纯前端实现，无需后端服务器
 - 响应式布局，完美适配各种屏幕尺寸
 - 使用localStorage存储设置和聊天历史

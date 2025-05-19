@@ -7,16 +7,16 @@
     <!-- 添加favicon，避免404错误 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
     <!-- 添加 markdown 解析库 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.0.0/marked.min.js" defer></script>
     <!-- 添加代码高亮库 -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/styles/github.min.css">
-    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.3.1/highlight.min.js" defer></script>
     <!-- 添加docx.js用于生成Word文档 -->
-    <script src="js/docx.js"></script>
+    <script src="js/docx.js" defer></script>
     <!-- 添加FileSaver.js用于保存文件 -->
-    <script src="js/FileSaver.min.js"></script>
+    <script src="js/FileSaver.min.js" defer></script>
     <!-- 引入我们创建的markdown-to-word.js -->
-    <script src="js/markdown-to-word.js"></script>
+    <script src="js/markdown-to-word.js" defer></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -142,7 +142,7 @@ const button = window.MarkdownToWord.createButton(
     '文件名'
 );</code></pre>
 
-    <script>
+    <script defer>
         // 示例Markdown文本
         const sampleMarkdown = `# Markdown示例文档
 
