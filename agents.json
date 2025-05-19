@@ -2,9 +2,9 @@
   {
     "id": "1",
     "name": "1️⃣通用助手（快速解答常见问题）",
-    "apiKeyVariableName": "sk-T0nV0ou7yNLYfcVi4904572e5d354a40B968A0B53bEaFc8a",
-    "apiUrl": "https://aihubmix.com/v1/chat/completions",
-    "model": "gemini-2.0-flash",
+    "apiKeyVariableName": "6cd1bea6-f188-462b-8803-4a2b52eee1db",
+    "apiUrl": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    "model": "doubao-1-5-pro-32k-250115",
     "systemPrompt": "你是一个高情商，乐于助人的AI助手，帮助生活更幸福、更高效，更快乐。",
     "temperature": 0.7,
     "max_tokens": 15000,
@@ -77,4 +77,3 @@
     "welcomeMessage": "直接输入问题，我会回答。"
   }
 ]
-<!-- 最后更新: 2025-05-19T11:03:01.044468 -->
