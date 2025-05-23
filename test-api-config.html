@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API配置测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .config-display {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 API配置测试工具</h1>
+    
+    <div class="test-container">
+        <h2>1. 加载智能体配置</h2>
+        <button onclick="loadAgentsConfig()">加载agents.json</button>
+        <div id="config-result"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>2. 测试API调用</h2>
+        <button onclick="testAPICall()">测试API连接</button>
+        <textarea id="test-message" placeholder="输入测试消息...">你好，请简单回复一下</textarea>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>3. 智能体配置详情</h2>
+        <div id="agent-details"></div>
+    </div>
+
+    <script>
+        let currentAgents = [];
+        
+        // 加载智能体配置
+        async function loadAgentsConfig() {
+            const resultDiv = document.getElementById('config-result');
+            const detailsDiv = document.getElementById('agent-details');
+            
+            try {
+                resultDiv.innerHTML = '<div class="info">正在加载agents.json...</div>';
+                
+                const response = await fetch('agents.json?t=' + Date.now());
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                
+                const agents = await response.json();
+                currentAgents = agents;
+                
+                resultDiv.innerHTML = `<div class="success">✅ 成功加载 ${agents.length} 个智能体</div>`;
+                
+                // 显示详细配置
+                let detailsHtml = '';
+                agents.forEach((agent, index) => {
+                    detailsHtml += `
+                        <div class="config-display">
+                            <strong>智能体 ${index + 1}: ${agent.name}</strong>
+                            ID: ${agent.id}
+                            API URL: ${agent.apiUrl}
+                            API Key: ${agent.apiKeyVariableName ? agent.apiKeyVariableName.substring(0, 20) + '...' : '未设置'}
+                            模型: ${agent.model}
+                            温度: ${agent.temperature}
+                            最大令牌: ${agent.max_tokens}
+                        </div>
+                    `;
+                });
+                detailsDiv.innerHTML = detailsHtml;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ 加载失败: ${error.message}</div>`;
+                console.error('加载agents.json失败:', error);
+            }
+        }
+        
+        // 测试API调用
+        async function testAPICall() {
+            const resultDiv = document.getElementById('api-result');
+            const message = document.getElementById('test-message').value;
+            
+            if (currentAgents.length === 0) {
+                resultDiv.innerHTML = '<div class="error">❌ 请先加载智能体配置</div>';
+                return;
+            }
+            
+            const agent = currentAgents[0]; // 使用第一个智能体测试
+            
+            try {
+                resultDiv.innerHTML = '<div class="info">🔄 正在测试API调用...</div>';
+                
+                // 准备请求数据
+                const requestData = {
+                    model: agent.model,
+                    messages: [
+                        { role: 'system', content: agent.systemPrompt || '你是一个有用的助手' },
+                        { role: 'user', content: message }
+                    ],
+                    temperature: agent.temperature || 0.7,
+                    max_tokens: Math.min(agent.max_tokens || 1000, 1000), // 限制测试用的token数
+                    stream: false // 测试时不使用流式
+                };
+                
+                console.log('测试请求数据:', requestData);
+                console.log('使用API密钥:', agent.apiKeyVariableName ? agent.apiKeyVariableName.substring(0, 20) + '...' : '未设置');
+                
+                const response = await fetch(agent.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${agent.apiKeyVariableName}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('响应状态:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API调用失败 (${response.status}): ${errorData.error?.message || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API响应:', data);
+                
+                let responseText = '';
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    responseText = data.choices[0].message.content;
+                } else if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    responseText = data.candidates[0].content.parts[0].text;
+                } else {
+                    responseText = '无法解析AI响应';
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="success">✅ API调用成功!</div>
+                    <div class="config-display">
+                        <strong>AI回复:</strong>
+                        ${responseText}
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ API调用失败: ${error.message}</div>`;
+                console.error('API调用失败:', error);
+            }
+        }
+        
+        // 页面加载时自动加载配置
+        window.onload = function() {
+            loadAgentsConfig();
+        };
+    </script>
+</body>
+</html> 

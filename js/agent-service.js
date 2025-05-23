@@ -133,20 +133,35 @@ const AgentService = {
                 }
             });
             
-            // 转换格式
-            const formattedBuiltInAgents = builtInAgents.map(agent => ({
-                id: agent.id,
-                name: agent.name,
-                apiUrl: agent.apiUrl,
-                apiKey: agent.apiKeyVariableName,
-                model: agent.model,
-                systemPrompt: agent.systemPrompt || '',
-                temperature: agent.temperature || 0.7,
-                maxTokens: agent.max_tokens || 2048,
-                welcomeMessage: agent.welcomeMessage || '',
-                isBuiltIn: true,
-                source: 'json'
-            }));
+            // 转换格式 - 🔧 确保API密钥字段正确映射
+            const formattedBuiltInAgents = builtInAgents.map(agent => {
+                const formattedAgent = {
+                    id: agent.id,
+                    name: agent.name,
+                    apiUrl: agent.apiUrl,
+                    apiKey: agent.apiKeyVariableName || agent.apiKey, // 优先使用apiKeyVariableName
+                    model: agent.model,
+                    systemPrompt: agent.systemPrompt || '',
+                    temperature: agent.temperature || 0.7,
+                    maxTokens: agent.max_tokens || 2048,
+                    welcomeMessage: agent.welcomeMessage || '',
+                    isBuiltIn: true,
+                    source: 'json'
+                };
+                
+                // 🔧 调试信息：检查API密钥映射
+                if (!formattedAgent.apiKey || formattedAgent.apiKey === 'YOUR_API_KEY_HERE') {
+                    console.warn('智能体API密钥配置问题:', {
+                        agentId: agent.id,
+                        agentName: agent.name,
+                        originalApiKeyVariableName: agent.apiKeyVariableName,
+                        originalApiKey: agent.apiKey,
+                        mappedApiKey: formattedAgent.apiKey
+                    });
+                }
+                
+                return formattedAgent;
+            });
             
             // 添加不与本地智能体ID冲突的内置智能体
             formattedBuiltInAgents.forEach(builtInAgent => {

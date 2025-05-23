@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 API诊断工具</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .result {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        .config-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .config-item h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .config-detail {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .quick-fix {
+            background: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .quick-fix h4 {
+            color: #0066cc;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 API配置诊断工具</h1>
+        
+        <div class="test-section">
+            <h3>📋 第一步：加载配置文件</h3>
+            <button onclick="loadAndDiagnose()">开始诊断</button>
+            <div id="load-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 第二步：配置详情检查</h3>
+            <div id="config-details"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 第三步：API连接测试</h3>
+            <button onclick="testFirstAgent()" id="test-btn" disabled>测试第一个智能体</button>
+            <div id="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💡 诊断建议</h3>
+            <div id="suggestions"></div>
+        </div>
+    </div>
+
+    <script>
+        let agents = [];
+        
+        async function loadAndDiagnose() {
+            const loadResult = document.getElementById('load-result');
+            const configDetails = document.getElementById('config-details');
+            const suggestions = document.getElementById('suggestions');
+            
+            try {
+                loadResult.innerHTML = '<div class="info">🔄 正在加载agents.json...</div>';
+                
+                const response = await fetch('agents.json?t=' + Date.now());
+                if (!response.ok) {
+                    throw new Error(`无法加载配置文件 (${response.status})`);
+                }
+                
+                agents = await response.json();
+                
+                loadResult.innerHTML = `<div class="success">✅ 成功加载 ${agents.length} 个智能体配置</div>`;
+                
+                // 分析配置
+                analyzeConfiguration();
+                
+                // 启用测试按钮
+                document.getElementById('test-btn').disabled = false;
+                
+            } catch (error) {
+                loadResult.innerHTML = `<div class="error">❌ 加载失败: ${error.message}</div>`;
+                suggestions.innerHTML = `
+                    <div class="quick-fix">
+                        <h4>🔧 快速修复建议：</h4>
+                        <p>1. 确保agents.json文件存在于项目根目录</p>
+                        <p>2. 检查文件格式是否为有效的JSON</p>
+                        <p>3. 确保HTTP服务器正在运行</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function analyzeConfiguration() {
+            const configDetails = document.getElementById('config-details');
+            const suggestions = document.getElementById('suggestions');
+            
+            let html = '';
+            let issues = [];
+            
+            agents.forEach((agent, index) => {
+                const hasValidApiKey = agent.apiKeyVariableName && 
+                                     agent.apiKeyVariableName !== 'YOUR_API_KEY_HERE' &&
+                                     agent.apiKeyVariableName.length > 10;
+                
+                const hasValidUrl = agent.apiUrl && agent.apiUrl.startsWith('http');
+                const hasValidModel = agent.model && agent.model.length > 0;
+                
+                html += `
+                    <div class="config-item">
+                        <h4>${index + 1}. ${agent.name}</h4>
+                        <div class="config-detail">ID: ${agent.id}</div>
+                        <div class="config-detail">API URL: ${agent.apiUrl}</div>
+                        <div class="config-detail">模型: ${agent.model}</div>
+                        <div class="config-detail">API密钥: ${hasValidApiKey ? 
+                            agent.apiKeyVariableName.substring(0, 15) + '...' : 
+                            '❌ 无效或未设置'}</div>
+                        <div class="config-detail">温度: ${agent.temperature}</div>
+                        <div class="config-detail">最大令牌: ${agent.max_tokens}</div>
+                        
+                        ${!hasValidApiKey ? '<div class="error">⚠️ API密钥无效</div>' : ''}
+                        ${!hasValidUrl ? '<div class="error">⚠️ API URL无效</div>' : ''}
+                        ${!hasValidModel ? '<div class="error">⚠️ 模型名称无效</div>' : ''}
+                    </div>
+                `;
+                
+                if (!hasValidApiKey) issues.push(`智能体"${agent.name}"的API密钥无效`);
+                if (!hasValidUrl) issues.push(`智能体"${agent.name}"的API URL无效`);
+                if (!hasValidModel) issues.push(`智能体"${agent.name}"的模型名称无效`);
+            });
+            
+            configDetails.innerHTML = html;
+            
+            // 生成建议
+            if (issues.length > 0) {
+                suggestions.innerHTML = `
+                    <div class="quick-fix">
+                        <h4>🚨 发现的问题：</h4>
+                        ${issues.map(issue => `<p>• ${issue}</p>`).join('')}
+                        
+                        <h4>🔧 修复建议：</h4>
+                        <p>1. 打开主页面，点击"管理员模式"</p>
+                        <p>2. 编辑有问题的智能体</p>
+                        <p>3. 确保API密钥格式正确（通常以sk-开头）</p>
+                        <p>4. 确保API URL是完整的HTTPS地址</p>
+                        <p>5. 确保模型名称与API服务商提供的名称一致</p>
+                    </div>
+                `;
+            } else {
+                suggestions.innerHTML = `
+                    <div class="success">
+                        ✅ 所有智能体配置看起来都正常！可以进行API连接测试。
+                    </div>
+                `;
+            }
+        }
+        
+        async function testFirstAgent() {
+            const testResult = document.getElementById('test-result');
+            
+            if (agents.length === 0) {
+                testResult.innerHTML = '<div class="error">❌ 没有可测试的智能体</div>';
+                return;
+            }
+            
+            const agent = agents[0];
+            
+            try {
+                testResult.innerHTML = '<div class="info">🔄 正在测试API连接...</div>';
+                
+                const requestData = {
+                    model: agent.model,
+                    messages: [
+                        { role: 'system', content: agent.systemPrompt || '你是一个有用的助手' },
+                        { role: 'user', content: '请简单回复"测试成功"' }
+                    ],
+                    temperature: agent.temperature || 0.7,
+                    max_tokens: 50,
+                    stream: false
+                };
+                
+                console.log('测试请求:', {
+                    url: agent.apiUrl,
+                    model: agent.model,
+                    apiKey: agent.apiKeyVariableName ? agent.apiKeyVariableName.substring(0, 15) + '...' : '未设置'
+                });
+                
+                const response = await fetch(agent.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${agent.apiKeyVariableName}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('响应状态:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch {
+                        errorData = { error: { message: errorText } };
+                    }
+                    
+                    throw new Error(`API调用失败 (${response.status}): ${errorData.error?.message || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API响应:', data);
+                
+                let responseText = '';
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    responseText = data.choices[0].message.content;
+                } else if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    responseText = data.candidates[0].content.parts[0].text;
+                } else {
+                    responseText = '收到响应但格式未知';
+                }
+                
+                testResult.innerHTML = `
+                    <div class="success">
+                        ✅ API连接测试成功！
+                        <div class="config-detail">AI回复: ${responseText}</div>
+                        <div class="config-detail">响应时间: ${Date.now() - startTime}ms</div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('API测试失败:', error);
+                
+                let errorMsg = error.message;
+                let suggestion = '';
+                
+                if (error.message.includes('401')) {
+                    suggestion = '🔧 API密钥无效，请检查密钥是否正确';
+                } else if (error.message.includes('403')) {
+                    suggestion = '🔧 API密钥权限不足，请检查密钥权限';
+                } else if (error.message.includes('429')) {
+                    suggestion = '🔧 API请求频率超限，请稍后再试';
+                } else if (error.message.includes('network') || error.message.includes('fetch')) {
+                    suggestion = '🔧 网络连接问题，请检查网络或API地址';
+                } else {
+                    suggestion = '🔧 请检查API配置是否正确';
+                }
+                
+                testResult.innerHTML = `
+                    <div class="error">
+                        ❌ API测试失败: ${errorMsg}
+                        <div class="config-detail">${suggestion}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // 页面加载时自动开始诊断
+        window.onload = function() {
+            loadAndDiagnose();
+        };
+        
+        let startTime;
+        document.getElementById('test-btn').addEventListener('click', () => {
+            startTime = Date.now();
+        });
+    </script>
+</body>
+</html> 

@@ -14,6 +14,22 @@ const ApiService = {
             return;
         }
         
+        // 🔧 修复：确保API密钥字段正确
+        const apiKey = agent.apiKey || agent.apiKeyVariableName;
+        if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+            console.error('API密钥无效:', { 
+                agentId: agent.id, 
+                agentName: agent.name,
+                apiKey: apiKey ? apiKey.substring(0, 10) + '...' : '未设置',
+                hasApiKey: !!agent.apiKey,
+                hasApiKeyVariableName: !!agent.apiKeyVariableName
+            });
+            if (typeof onError === 'function') {
+                onError({ message: 'API密钥无效或未设置，请在管理员模式下配置正确的API密钥' });
+            }
+            return;
+        }
+        
         // 初始化响应文本
         let fullResponse = '';
         
@@ -40,6 +56,15 @@ const ApiService = {
                 stream: true
             };
             
+            // 🔧 调试信息
+            console.log('API调用详情:', {
+                agentName: agent.name,
+                apiUrl: agent.apiUrl,
+                model: agent.model,
+                apiKeyPrefix: apiKey.substring(0, 10) + '...',
+                messageCount: messages.length
+            });
+            
             // 创建请求的AbortController，设置30秒超时
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -48,7 +73,7 @@ const ApiService = {
             const response = await fetch(agent.apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${agent.apiKey}`,
+                    'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestData),
@@ -61,6 +86,11 @@ const ApiService = {
             // 处理错误响应
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+                console.error('API响应错误:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    errorData: errorData
+                });
                 throw {
                     response: {
                         status: response.status,
