@@ -145,7 +145,7 @@ const AgentService = {
                     temperature: agent.temperature || 0.7,
                     maxTokens: agent.max_tokens || 2048,
                     welcomeMessage: agent.welcomeMessage || '',
-                    isBuiltIn: true,
+                    isBuiltIn: false, // 🔧 修复：设置为用户可编辑
                     source: 'json'
                 };
                 
@@ -655,8 +655,8 @@ const AgentService = {
             return false;
         }
         
-        // 内置智能体不可删除
-        if (agent.isBuiltIn || agent.source === 'json') {
+        // 内置智能体不可删除 (仅限真正的内置智能体)
+        if (agent.isBuiltIn) {
             if (window.MessageHandler) {
                 window.MessageHandler.displaySystemMessage('内置智能体不可删除。');
             }
