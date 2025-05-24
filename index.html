@@ -45,14 +45,33 @@
     <script src="js/docx.js" defer></script>
     <!-- 添加FileSaver.js用于保存文件 - 使用本地文件，添加noSourceMap参数避免404错误 -->
     <script src="js/FileSaver.min.js" data-no-sourcemap defer></script>
-    <script src="js/layout-manager.js" defer></script>
-    <script src="js/message-handler.js" defer></script>
-    <script src="js/storage-service.js" defer></script>
-    <script src="js/export-service.js" defer></script>
-    <script src="js/agent-service.js" defer></script>
-    <script src="js/api-service.js" defer></script>
-    <script src="js/chat-service.js" defer></script>
-    <link rel="stylesheet" href="style.css">
+    <script>
+        // 缓存破坏机制 - 生成版本号
+        const version = Date.now();
+        const scripts = [
+            'js/layout-manager.js',
+            'js/message-handler.js', 
+            'js/storage-service.js',
+            'js/export-service.js',
+            'js/agent-service.js',
+            'js/api-service.js',
+            'js/chat-service.js'
+        ];
+        
+        // 动态加载所有JavaScript文件
+        scripts.forEach(script => {
+            const scriptElement = document.createElement('script');
+            scriptElement.src = `${script}?v=${version}`;
+            scriptElement.defer = true;
+            document.head.appendChild(scriptElement);
+        });
+        
+        // 动态加载CSS文件
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = `style.css?v=${version}`;
+        document.head.appendChild(cssLink);
+    </script>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -201,6 +220,18 @@
                     <input type="checkbox" id="code-highlight-enabled" checked>
                     <span class="toggle-slider"></span>
                 </label>
+            </div>
+        </div>
+        
+        <!-- 强制修复区域 -->
+        <div class="settings-group">
+            <div class="settings-section-title">故障排除</div>
+            <div class="settings-option force-fix-option">
+                <div>
+                    <div>🔧 强制修复</div>
+                    <div class="settings-description">清除所有缓存数据，解决API密钥错误等问题</div>
+                </div>
+                <button id="force-fix-btn" class="force-fix-button">立即修复</button>
             </div>
         </div>
     </div>

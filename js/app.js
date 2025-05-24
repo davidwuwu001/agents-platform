@@ -52,12 +52,51 @@ const App = {
     
     // 初始化全局缓存对象
     initCache: function() {
+        // 清理可能存在的旧缓存数据，防止API密钥错误
+        this.clearOldCache();
+        
         // 全局缓存，用于存储共享数据
         window.cache = {
             agents: null,
             currentAgent: null,
             settings: null
         };
+    },
+    
+    // 清理旧的缓存数据
+    clearOldCache: function() {
+        try {
+            // 检查版本号，如果是旧版本则清除所有localStorage数据
+            const currentVersion = "2025.01.24.1"; // 更新版本号
+            const storedVersion = localStorage.getItem('app_version');
+            
+            if (storedVersion !== currentVersion) {
+                console.log("检测到版本更新，清理旧缓存数据...");
+                
+                // 清除所有可能的旧数据
+                const keysToRemove = [
+                    'agents',
+                    'currentAgent', 
+                    'apiConfig',
+                    'chatHistory',
+                    'userSettings',
+                    'agentData',
+                    'apiKeys',
+                    'selectedAgent'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                    sessionStorage.removeItem(key);
+                });
+                
+                // 更新版本号
+                localStorage.setItem('app_version', currentVersion);
+                console.log("缓存清理完成，版本已更新到:", currentVersion);
+            }
+        } catch (error) {
+            console.warn("清理缓存时出错:", error);
+        }
     },
     
     // 获取DOM元素
@@ -226,6 +265,12 @@ const App = {
             tangzaiButton.addEventListener('click', function() {
                 window.location.href = 'tangzai.html';
             });
+        }
+        
+        // 强制修复按钮
+        const forceFixBtn = document.getElementById('force-fix-btn');
+        if (forceFixBtn) {
+            forceFixBtn.addEventListener('click', () => this.forceFixCache());
         }
     },
     
@@ -555,6 +600,97 @@ const App = {
         
         // 更新缓存
         window.cache.settings = settings;
+    },
+    
+    // 强制修复缓存
+    forceFixCache: function() {
+        const forceFixBtn = document.getElementById('force-fix-btn');
+        
+        // 显示确认对话框
+        const confirmed = confirm(`🔧 强制修复功能\n\n即将执行以下操作：\n\n✓ 清除所有本地存储数据\n✓ 清除所有会话数据\n✓ 重置应用到初始状态\n✓ 强制刷新页面\n\n这将解决所有缓存相关的问题，但会丢失以下数据：\n• 聊天历史记录\n• 用户偏好设置\n• 临时保存的智能体配置\n\n确定要继续吗？`);
+        
+        if (!confirmed) {
+            return;
+        }
+        
+        try {
+            // 禁用按钮并显示加载状态
+            if (forceFixBtn) {
+                forceFixBtn.disabled = true;
+                forceFixBtn.innerHTML = '<span class="force-fix-loading"></span>修复中...';
+            }
+            
+            console.log("开始强制修复缓存...");
+            
+            // 1. 清除所有localStorage数据
+            const localStorageKeys = Object.keys(localStorage);
+            localStorageKeys.forEach(key => {
+                try {
+                    localStorage.removeItem(key);
+                    console.log(`已清除localStorage: ${key}`);
+                } catch (e) {
+                    console.warn(`清除localStorage失败: ${key}`, e);
+                }
+            });
+            
+            // 2. 清除所有sessionStorage数据
+            const sessionStorageKeys = Object.keys(sessionStorage);
+            sessionStorageKeys.forEach(key => {
+                try {
+                    sessionStorage.removeItem(key);
+                    console.log(`已清除sessionStorage: ${key}`);
+                } catch (e) {
+                    console.warn(`清除sessionStorage失败: ${key}`, e);
+                }
+            });
+            
+            // 3. 清除全局缓存对象
+            if (window.cache) {
+                window.cache = {
+                    agents: null,
+                    currentAgent: null,
+                    settings: null
+                };
+            }
+            
+            // 4. 清除可能的全局变量
+            const globalVarsToReset = [
+                'currentAgent',
+                'messageHistories', 
+                'agents',
+                'selectedAgentId',
+                'apiConfig'
+            ];
+            
+            globalVarsToReset.forEach(varName => {
+                if (window[varName]) {
+                    window[varName] = null;
+                    console.log(`已重置全局变量: ${varName}`);
+                }
+            });
+            
+            console.log("强制修复完成，即将刷新页面...");
+            
+            // 5. 显示成功消息
+            alert("🎉 强制修复完成！\n\n已清除所有缓存数据，页面即将自动刷新。\n\n刷新后请重新选择智能体开始使用。");
+            
+            // 6. 延迟一秒后强制刷新页面（绕过缓存）
+            setTimeout(() => {
+                // 使用 location.reload(true) 强制从服务器重新加载
+                window.location.reload(true);
+            }, 1000);
+            
+        } catch (error) {
+            console.error("强制修复过程中出错:", error);
+            
+            // 恢复按钮状态
+            if (forceFixBtn) {
+                forceFixBtn.disabled = false;
+                forceFixBtn.innerHTML = '立即修复';
+            }
+            
+            alert(`❌ 强制修复失败\n\n错误信息: ${error.message}\n\n请尝试手动清除浏览器缓存或联系技术支持。`);
+        }
     }
 };
 
