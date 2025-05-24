@@ -367,7 +367,17 @@ const AgentService = {
                 editBtn.disabled = true;
                 editBtn.title = '内置智能体不可编辑';
             } else {
-                editBtn.onclick = () => this.editAgent(agent.id);
+                editBtn.onclick = () => {
+                    // 🔧 修复：调用App的editAgent方法来显示编辑表单
+                    if (window.App && window.App.editAgent) {
+                        window.App.editAgent(agent.id);
+                    } else {
+                        // 兼容模式：直接调用editAgent函数
+                        if (typeof editAgent === 'function') {
+                            editAgent(agent.id);
+                        }
+                    }
+                };
             }
             
             const deleteBtn = document.createElement('button');
@@ -377,7 +387,15 @@ const AgentService = {
                 deleteBtn.disabled = true;
                 deleteBtn.title = '内置智能体不可删除';
             } else {
-                deleteBtn.onclick = () => this.deleteAgent(agent.id);
+                deleteBtn.onclick = () => {
+                    // 🔧 修复：调用App的deleteAgent方法
+                    if (window.App && window.App.deleteAgent) {
+                        window.App.deleteAgent(agent.id);
+                    } else {
+                        // 兼容模式：直接调用本地deleteAgent方法
+                        this.deleteAgent(agent.id);
+                    }
+                };
             }
             
             agentActions.appendChild(editBtn);
